@@ -22,7 +22,6 @@ namespace AdofaiModManager
             {
                 Instance = new GameObject("ModManager").AddComponent<ManagerObject>();
                 UnityEngine.Object.DontDestroyOnLoad(Instance.gameObject);
-                Logger.Log(Instance);
                 OpenUnityFileLog();
                 Mods = new List<Mod>();
                 Logger = new ModLogger("Manager");
@@ -71,7 +70,6 @@ namespace AdofaiModManager
                     string text = Path.Combine(path, path2);
                     if (File.Exists(text))
                     {
-                        Thread.Sleep(500);
                         Application.OpenURL(text);
                         return;
                     }

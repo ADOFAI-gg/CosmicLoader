@@ -289,6 +289,7 @@
   <ItemGroup>
     <Compile Include="Library.cs" />
     <Compile Include="Libs\Delegates.cs" />
+    <Compile Include="Libs\dnlib.cs" />
     <Compile Include="Libs\Harmony\Extras\DelegateTypeFactory.cs" />
     <Compile Include="Libs\Harmony\Extras\FastAccess.cs" />
     <Compile Include="Libs\Harmony\Extras\MethodInvoker.cs" />
