@@ -21,6 +21,9 @@ namespace CosmicLoader.UI
             Debug.Log($"Loaded {bundle}");
             Window = bundle.LoadAsset<GameObject>("ModWindow").gameObject;
             ModButton = bundle.LoadAsset<GameObject>("ModBtn");
+            var text = ModButton.GetComponent<Text>();
+            text.resizeTextForBestFit = true;
+            ModButton.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 30);
         }
     }
 }

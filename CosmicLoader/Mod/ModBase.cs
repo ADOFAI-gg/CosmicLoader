@@ -13,6 +13,7 @@ namespace CosmicLoader
         public abstract Assembly Assembly { get; protected set; }
         public abstract bool Loaded { get; protected set; }
         public abstract bool LoadFailed { get; protected set; }
+        public bool LoadedAndReady => Loaded && !LoadFailed;
         
         
         private bool _active = false;

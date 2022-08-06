@@ -21,6 +21,7 @@ namespace CosmicLoader.UI
 
         [NonSerialized] public ModBase SelectedMod;
         [NonSerialized] public Button SelectedModBtn;
+        [NonSerialized] public Vector2 ScrollPosition;
 
 
         public void SelectMod(ModBase mod)
@@ -32,6 +33,7 @@ namespace CosmicLoader.UI
             if (!mod.Loaded || mod.LoadFailed) selectedModEnabled.targetGraphic.color = Color.red;
             else if (mod.Active) selectedModEnabled.targetGraphic.color = Color.green;
             else selectedModEnabled.targetGraphic.color = Color.gray;
+            ScrollPosition = Vector2.zero;
         }
 
         private void Awake()
@@ -48,10 +50,9 @@ namespace CosmicLoader.UI
 
         public void Initialize(List<ModBase> mods)
         {
-            GetComponent<Canvas>().sortingOrder = 100000;
             selectedModEnabled.onClick.AddListener(() =>
             {
-                if (!SelectedMod.Loaded || SelectedMod.LoadFailed)
+                if (!SelectedMod.LoadedAndReady)
                 {
                     selectedModEnabled.targetGraphic.color = Color.red;
                     return;
@@ -62,6 +63,10 @@ namespace CosmicLoader.UI
                 else selectedModEnabled.targetGraphic.color = Color.gray;
             });
             exitBtn.onClick.AddListener(() => gameObject.SetActive(false));
+
+            var lg = scroll.content.GetComponent<VerticalLayoutGroup>();
+            lg.padding = new RectOffset(15, 15, 15, 15);
+            lg.spacing = 15;
 
             title.text = "CosmicLoader v" + ModManager.Version;
 
@@ -74,25 +79,27 @@ namespace CosmicLoader.UI
                 btn.transition = Selectable.Transition.None;
                 btn.onClick.AddListener(() =>
                 {
+                    if (SelectedMod.LoadedAndReady) SelectedModBtn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
+                    else SelectedModBtn.targetGraphic.color = new Color32(0xAF, 0x5C, 0x5C, 0xFF);
                     SelectMod(mod);
-                    SelectedModBtn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
-                    btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    else btn.targetGraphic.color = new Color32(0xFF, 0x7C, 0x7C, 0xFF);
                     SelectedModBtn = btn;
                 });
 
-                btn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
+                if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
+                else btn.targetGraphic.color = new Color32(0xAF, 0x5C, 0x5C, 0xFF);
                 if (first)
                 {
                     SelectMod(mod);
                     SelectedModBtn = btn;
-                    btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    else btn.targetGraphic.color = new Color32(0xFF, 0x7C, 0x7C, 0xFF);
                     first = false;
                 }
             }
-
-            var img = modGUIRect.gameObject.AddComponent<Image>();
-            img.sprite = transform.GetChild(0).GetComponent<Image>().sprite;
-            img.color = Color.white;
+            
+            GetComponent<Canvas>().sortingOrder = -100000;
         }
 
         private void OnGUI()
@@ -103,6 +110,7 @@ namespace CosmicLoader.UI
                 rect.x += Screen.width / 2.0f;
                 rect.y += Screen.height / 2.0f;
                 GUILayout.BeginArea(rect);
+                ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUILayout.Width(782.222f), GUILayout.Height(533.333f));
                 try
                 {
                     SelectedMod.OnGUI?.Invoke();
@@ -112,6 +120,7 @@ namespace CosmicLoader.UI
                     GUILayout.TextArea(e.ToString());
                 }
 
+                GUILayout.EndScrollView();
                 GUILayout.EndArea();
             }
         }
