@@ -16,7 +16,7 @@ namespace CosmicLoader
             Application.quitting += () =>
             {
                 File.WriteAllText(ManagerConfig.Path, ModManager.Config.ToJson());
-                foreach (Mod mod in ModManager.Mods)
+                foreach (ModBase mod in ModManager.Mods)
                 {
                     if (!mod.Active) continue;
                     try
@@ -33,7 +33,7 @@ namespace CosmicLoader
 
         public void Update()
         {
-            foreach (Mod mod in ModManager.Mods)
+            foreach (ModBase mod in ModManager.Mods)
             {
                 if (!mod.Active) continue;
                 try

@@ -212,14 +212,14 @@ namespace UnityModManagerNet {
             /// <summary>UI checkbox</summary>
             public bool Enabled = true;
 
-            public Assembly Assembly => AssemblyAction(Mod);
+            public Assembly Assembly { get; set; }
 
             /// <summary>Show button to reload the mod [0.14.0]</summary>
             public bool CanReload { get; private set; }
 
-            public bool Started => LoadedAction(Mod);
+            public bool Started { get; set; }
 
-            public bool ErrorOnLoading => LoadFailedAction(Mod);
+            public bool ErrorOnLoading { get; set; }
 
             /// <summary>If OnToggle exists</summary>
             public bool Toggleable => this.OnToggle != null;
@@ -227,16 +227,7 @@ namespace UnityModManagerNet {
             /// <summary>If Assembly is loaded [0.13.1]</summary>
             public bool Loaded => this.Assembly != null;
 
-            public bool Active {
-                get => ActiveAction(Mod);
-                set => SetActiveAction(Mod, value);
-            }
-
-            public static Func<object, Assembly> AssemblyAction;
-            public static Func<object, bool> LoadedAction;
-            public static Func<object, bool> LoadFailedAction;
-            public static Func<object, bool> ActiveAction;
-            public static Action<object, bool> SetActiveAction;
+            public bool Active { get; set; }
 
             public ModEntry(ModInfo info, string path, object mod) {
                 this.Mod = mod;

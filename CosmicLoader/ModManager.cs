@@ -17,7 +17,7 @@ namespace CosmicLoader
         public static ManagerObject Instance { get; private set; }
         public static bool Loaded { get; private set; }
         public static ManagerConfig Config { get; private set; }
-        public static List<Mod> Mods { get; private set; }
+        public static List<ModBase> Mods { get; private set; }
         public static ModLogger Logger { get; private set; }
 
         public static void Initialize()
@@ -29,7 +29,7 @@ namespace CosmicLoader
                 Instance = new GameObject("ModManager").AddComponent<ManagerObject>();
                 UnityEngine.Object.DontDestroyOnLoad(Instance.gameObject);
                 OpenUnityFileLog();
-                Mods = new List<Mod>();
+                Mods = new List<ModBase>();
                 Logger = new ModLogger("Manager");
                 if (File.Exists(ManagerConfig.Path))
                     Config = File.ReadAllText(ManagerConfig.Path).FromJson<ManagerConfig>() ?? new ManagerConfig();
@@ -110,9 +110,18 @@ namespace CosmicLoader
                     foreach (var info in sortedInfos)
                     {
                         Logger.Log("Loading mod: " + info.Id);
-                        var mod = new Mod(info);
+                        ModBase mod;
+                        if (info.IsUMM)
+                        {
+                            mod = new UMMCompatMod(info);
+                        }
+                        else
+                        {
+                            mod = new CosmicMod(info);
+                        }
+
                         Mods.Add(mod);
-                        mod.TryLoad();
+                        mod.Initialize();
                     }
                 }
                 else Directory.CreateDirectory(modsPath);

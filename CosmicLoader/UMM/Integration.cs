@@ -8,8 +8,10 @@ namespace CosmicLoader.UMM
 {
     public static class Integration
     {
-        private static Dictionary<Mod, UnityModManager.ModEntry> _mods = new();
-        public static UnityModManager.ModEntry GetMod(this Mod mod) => _mods[mod];
+        private static Dictionary<UMMCompatMod, UnityModManager.ModEntry> _mods = new();
+        public static UnityModManager.ModEntry GetMod(this UMMCompatMod mod) => _mods[mod];
+        public static void RegisterEntry(UMMCompatMod mod, UnityModManager.ModEntry entry) => _mods.Add(mod, entry);
+        
 
         public static readonly Version LoaderVersion = new Version(0, 23, 4, 0);
 
@@ -43,7 +45,7 @@ namespace CosmicLoader.UMM
             return modInfo;
         }
 
-        public static UnityModManager.ModEntry CreateModEntry(Mod mod)
+        public static UnityModManager.ModEntry CreateModEntry(UMMCompatMod mod)
         {
             var info = new UnityModManager.ModInfo()
             {
@@ -67,11 +69,6 @@ namespace CosmicLoader.UMM
             UnityModManager.Logger.LogExceptionAction = (m, e) => logger.LogException(m, e);
             UnityModManager.ModSettings.SaveAction = (o, s) => ((ModSettings)o).Save(s);
             UnityModManager.ModSettings.LoadAction = s => ModSettings.Load(s);
-            UnityModManager.ModEntry.ActiveAction = o => ((Mod)o).Active;
-            UnityModManager.ModEntry.AssemblyAction = o => ((Mod)o).Assembly;
-            UnityModManager.ModEntry.LoadedAction = o => ((Mod)o).Loaded;
-            UnityModManager.ModEntry.LoadFailedAction = o => ((Mod)o).LoadFailed;
-            UnityModManager.ModEntry.SetActiveAction = (o, b) => ((Mod)o).Active = b;
         }
     }
 }
