@@ -4,8 +4,11 @@
     <projectFile>CosmicLoader.Installer/CosmicLoader.Installer.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3dd7c953-499f-4435-a8b3-fbf9b756d56c" name="Changes" comment="EditorConfig Revive">
+    <list default="true" id="3dd7c953-499f-4435-a8b3-fbf9b756d56c" name="Changes" comment="Ignore Rider">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CosmicLoader/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CosmicLoader/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CosmicLoader/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/CosmicLoader/.editorconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CosmicLoader/Libs/Newtonsoft.Json.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CosmicLoader/Libs/Newtonsoft.Json.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CosmicLoader/Mod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CosmicLoader/Mod.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,6 +19,8 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock://D:/CosmicLoader/CosmicLoader/Libs/Newtonsoft.Json.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://D:/CosmicLoader/CosmicLoader/Libs/Newtonsoft.Json.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CosmicLoader/Libs/Newtonsoft.Json.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CosmicLoader/Libs/dnlib.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CosmicLoader/Mod.cs" root0="FORCE_HIGHLIGHTING" />
@@ -82,7 +87,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1659783146290</updated>
-      <workItem from="1659783160989" duration="2630000" />
+      <workItem from="1659783160989" duration="3054000" />
     </task>
     <task id="LOCAL-00001" summary="Fix Harmony &amp; UMM Compat">
       <created>1659785057804</created>
@@ -105,7 +110,14 @@
       <option name="project" value="LOCAL" />
       <updated>1659785784041</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Ignore Rider">
+      <created>1659785961733</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1659785961733</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,7 +141,8 @@
     <MESSAGE value="Fix Harmony &amp; UMM Compat" />
     <MESSAGE value="Upload HarmonyEx" />
     <MESSAGE value="EditorConfig Revive" />
-    <option name="LAST_COMMIT_MESSAGE" value="EditorConfig Revive" />
+    <MESSAGE value="Ignore Rider" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ignore Rider" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
