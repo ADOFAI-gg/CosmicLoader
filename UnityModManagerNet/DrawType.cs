@@ -1,5 +1,7 @@
-﻿namespace UnityModManagerNet {
-    public enum DrawType {
+﻿namespace UnityModManagerNet
+{
+    public enum DrawType
+    {
         Auto,
         Ignore,
         Field,

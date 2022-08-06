@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -12,14 +9,13 @@ using System.Threading;
 using System.Xml.Serialization;
 //using TinyJson;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Networking;
-using UnityEngine.UI;
 
 // ReSharper disable once CheckNamespace
-namespace UnityModManagerNet {
-    public class UnityModManager {
-        public static readonly List<UnityModManager.ModEntry> modEntries = new List<UnityModManager.ModEntry>();
+namespace UnityModManagerNet
+{
+    public class UnityModManager
+    {
+        public static readonly List<ModEntry> modEntries = new List<ModEntry>();
 
         /// <summary>Contains version of UnityEngine</summary>
         public static Version unityVersion { get; private set; }
@@ -32,26 +28,31 @@ namespace UnityModManagerNet {
 
         public static string modsPath { get; private set; }
 
-        public static UnityModManager.ModEntry FindMod(string id) =>
-            UnityModManager.modEntries.FirstOrDefault<UnityModManager.ModEntry>(
-                (Func<UnityModManager.ModEntry, bool>) (x => x.Info.Id == id));
+        public static ModEntry FindMod(string id) =>
+            modEntries.FirstOrDefault(
+                x => x.Info.Id == id);
 
-        public static Version GetVersion() => UnityModManager.version;
+        public static Version GetVersion() => version;
 
         public static void SaveSettingsAndParams() { }
 
-        public static bool HasNetworkConnection() {
-            try {
+        public static bool HasNetworkConnection()
+        {
+            try
+            {
                 using (var ping = new System.Net.NetworkInformation.Ping())
                     return ping.Send("www.google.com.mx", 3000).Status == IPStatus.Success;
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
             }
 
             return false;
         }
 
-        public static void OpenUnityFileLog() {
+        public static void OpenUnityFileLog()
+        {
             string[] strArray1 = new string[2] {
                 Application.persistentDataPath,
                 Application.dataPath
@@ -60,10 +61,13 @@ namespace UnityModManagerNet {
                 "Player.log",
                 "output_log.txt"
             };
-            foreach (string path1 in strArray1) {
-                foreach (string path2 in strArray2) {
+            foreach (string path1 in strArray1)
+            {
+                foreach (string path2 in strArray2)
+                {
                     string str = Path.Combine(path1, path2);
-                    if (File.Exists(str)) {
+                    if (File.Exists(str))
+                    {
                         Thread.Sleep(500);
                         Application.OpenURL(str);
                         return;
@@ -72,15 +76,18 @@ namespace UnityModManagerNet {
             }
         }
 
-        public static Version ParseVersion(string str) {
+        public static Version ParseVersion(string str)
+        {
             string[] strArray = str.Split('.');
-            if (strArray.Length >= 3) {
+            if (strArray.Length >= 3)
+            {
                 Regex regex = new Regex("\\D");
                 return new Version(int.Parse(regex.Replace(strArray[0], "")), int.Parse(regex.Replace(strArray[1], "")),
                     int.Parse(regex.Replace(strArray[2], "")));
             }
 
-            if (strArray.Length >= 2) {
+            if (strArray.Length >= 2)
+            {
                 Regex regex = new Regex("\\D");
                 return new Version(int.Parse(regex.Replace(strArray[0], "")),
                     int.Parse(regex.Replace(strArray[1], "")));
@@ -88,13 +95,15 @@ namespace UnityModManagerNet {
 
             if (strArray.Length >= 1)
                 return new Version(int.Parse(new Regex("\\D").Replace(strArray[0], "")), 0);
-            UnityModManager.Logger.Error("Error parsing version " + str);
+            Logger.Error("Error parsing version " + str);
             return new Version();
         }
 
-        public static bool IsUnixPlatform() {
-            int platform = (int) Environment.OSVersion.Platform;
-            switch (platform) {
+        public static bool IsUnixPlatform()
+        {
+            int platform = (int)Environment.OSVersion.Platform;
+            switch (platform)
+            {
                 case 4:
                 case 6:
                     return true;
@@ -105,13 +114,15 @@ namespace UnityModManagerNet {
 
         public static bool IsMacPlatform() => Environment.OSVersion.Platform == PlatformID.MacOSX;
 
-        public static bool IsLinuxPlatform() {
-            int platform = (int) Environment.OSVersion.Platform;
+        public static bool IsLinuxPlatform()
+        {
+            int platform = (int)Environment.OSVersion.Platform;
             return platform == 4 || platform == 128;
         }
 
         [XmlRoot("Config")]
-        public class GameInfo {
+        public class GameInfo
+        {
             [XmlAttribute]
             public string Name;
 
@@ -126,25 +137,30 @@ namespace UnityModManagerNet {
             public string MinimalManagerVersion;
 
             private static readonly string filepath =
-                Path.Combine(Path.GetDirectoryName(typeof(UnityModManager.GameInfo).Assembly.Location), "Config.xml");
+                Path.Combine(Path.GetDirectoryName(typeof(GameInfo).Assembly.Location), "Config.xml");
 
-            public static UnityModManager.GameInfo Load() {
-                try {
-                    using (FileStream fileStream = File.OpenRead(UnityModManager.GameInfo.filepath))
-                        return new XmlSerializer(typeof(UnityModManager.GameInfo)).Deserialize((Stream) fileStream) as
-                            UnityModManager.GameInfo;
-                } catch (Exception ex) {
-                    UnityModManager.Logger.Error("Can't read file '" + UnityModManager.GameInfo.filepath + "'.");
-                    UnityEngine.Debug.LogException(ex);
-                    return (UnityModManager.GameInfo) null;
+            public static GameInfo Load()
+            {
+                try
+                {
+                    using (FileStream fileStream = File.OpenRead(GameInfo.filepath))
+                        return new XmlSerializer(typeof(GameInfo)).Deserialize(fileStream) as
+                            GameInfo;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Can't read file '" + GameInfo.filepath + "'.");
+                    Debug.LogException(ex);
+                    return null;
                 }
             }
         }
 
-        public class ModEntry {
+        public class ModEntry
+        {
             public readonly object Mod; // CosmicLoader.Mod
-            
-            public readonly UnityModManager.ModInfo Info;
+
+            public readonly ModInfo Info;
 
             /// <summary>Path to mod folder</summary>
             public readonly string Path;
@@ -174,44 +190,44 @@ namespace UnityModManagerNet {
             /// </summary>
             public string CustomRequirements = string.Empty;
 
-            public readonly UnityModManager.ModEntry.ModLogger Logger;
+            public readonly ModEntry.ModLogger Logger;
 
             /// <summary>Not used</summary>
             public bool HasUpdate;
 
             /// <summary>Called to unload old data for reloading mod [0.14.0]</summary>
-            public Func<UnityModManager.ModEntry, bool> OnUnload;
+            public Func<ModEntry, bool> OnUnload;
 
             /// <summary>Called to activate / deactivate the mod</summary>
-            public Func<UnityModManager.ModEntry, bool, bool> OnToggle;
+            public Func<ModEntry, bool, bool> OnToggle;
 
             /// <summary>
             /// Called by MonoBehaviour.OnGUI when mod options are visible.
             /// </summary>
-            public Action<UnityModManager.ModEntry> OnGUI;
+            public Action<ModEntry> OnGUI;
 
             /// <summary>Called by MonoBehaviour.OnGUI, always [0.21.0]</summary>
-            public Action<UnityModManager.ModEntry> OnFixedGUI;
+            public Action<ModEntry> OnFixedGUI;
 
             /// <summary>Called when opening mod GUI [0.16.0]</summary>
-            public Action<UnityModManager.ModEntry> OnShowGUI;
+            public Action<ModEntry> OnShowGUI;
 
             /// <summary>Called when closing mod GUI [0.16.0]</summary>
-            public Action<UnityModManager.ModEntry> OnHideGUI;
+            public Action<ModEntry> OnHideGUI;
 
             /// <summary>Called when the game closes</summary>
-            public Action<UnityModManager.ModEntry> OnSaveGUI;
+            public Action<ModEntry> OnSaveGUI;
 
             /// <summary>Called by MonoBehaviour.Update [0.13.0]</summary>
-            public Action<UnityModManager.ModEntry, float> OnUpdate;
+            public Action<ModEntry, float> OnUpdate;
 
             /// <summary>Called by MonoBehaviour.LateUpdate [0.13.0]</summary>
-            public Action<UnityModManager.ModEntry, float> OnLateUpdate;
+            public Action<ModEntry, float> OnLateUpdate;
 
             /// <summary>Called by MonoBehaviour.FixedUpdate [0.13.0]</summary>
-            public Action<UnityModManager.ModEntry, float> OnFixedUpdate;
+            public Action<ModEntry, float> OnFixedUpdate;
 
-            private Dictionary<long, MethodInfo> mCache = new Dictionary<long, MethodInfo>();
+            private readonly Dictionary<long, MethodInfo> mCache = new Dictionary<long, MethodInfo>();
 
             /// <summary>UI checkbox</summary>
             public bool Enabled = true;
@@ -231,7 +247,8 @@ namespace UnityModManagerNet {
             /// <summary>If Assembly is loaded [0.13.1]</summary>
             public bool Loaded => this.Assembly != null;
 
-            public bool Active {
+            public bool Active
+            {
                 get => ActiveAction(Mod);
                 set => SetActiveAction(Mod, value);
             }
@@ -242,29 +259,32 @@ namespace UnityModManagerNet {
             public static Func<object, bool> ActiveAction;
             public static Action<object, bool> SetActiveAction;
 
-            public ModEntry(ModInfo info, string path, object mod) {
+            public ModEntry(ModInfo info, string path, object mod)
+            {
                 this.Mod = mod;
                 this.Info = info;
                 this.Path = path;
-                
-                this.Logger = new UnityModManager.ModEntry.ModLogger(this.Info.Id);
-                this.Version = UnityModManager.ParseVersion(info.Version);
+
+                this.Logger = new ModEntry.ModLogger(this.Info.Id);
+                this.Version = ParseVersion(info.Version);
                 this.ManagerVersion = new Version();
                 this.GameVersion = new Version();
 
                 if (info.LoadAfter == null || info.LoadAfter.Length == 0)
                     return;
-                this.LoadAfter.AddRange((IEnumerable<string>) info.LoadAfter);
+                this.LoadAfter.AddRange(info.LoadAfter);
             }
 
-            public class ModLogger {
+            public class ModLogger
+            {
                 protected readonly string Prefix;
                 protected readonly string PrefixError;
                 protected readonly string PrefixCritical;
                 protected readonly string PrefixWarning;
                 protected readonly string PrefixException;
 
-                public ModLogger(string Id) {
+                public ModLogger(string Id)
+                {
                     this.Prefix = "[" + Id + "] ";
                     this.PrefixError = "[" + Id + "] [Error] ";
                     this.PrefixCritical = "[" + Id + "] [Critical] ";
@@ -288,38 +308,39 @@ namespace UnityModManagerNet {
 
                 /// <summary>[0.17.0]</summary>
                 public void LogException(Exception e) =>
-                    UnityModManager.Logger.LogException((string) null, e, this.PrefixException);
+                    UnityModManager.Logger.LogException(null, e, this.PrefixException);
             }
         }
 
-        public static class Logger {
+        public static class Logger
+        {
             public static readonly string filepath =
                 Path.Combine(Path.Combine(Application.dataPath, Path.Combine("Managed", nameof(UnityModManager))),
                     "Log.txt");
 
-            public static void NativeLog(string str) => UnityModManager.Logger.NativeLog(str, "[UMM-Compat] ");
+            public static void NativeLog(string str) => NativeLog(str, "[UMM-Compat] ");
 
             public static void NativeLog(string str, string prefix) => LogAction(prefix + str);
 
-            public static void Log(string str) => UnityModManager.Logger.Log(str, "[UMM-Compat] ");
+            public static void Log(string str) => Logger.Log(str, "[UMM-Compat] ");
 
             public static void Log(string str, string prefix) => LogAction(prefix + str);
 
-            public static void Error(string str) => UnityModManager.Logger.Error(str, "[UMM-Compat] [Error] ");
+            public static void Error(string str) => Logger.Error(str, "[UMM-Compat] [Error] ");
 
             public static void Error(string str, string prefix) => LogErrorAction(prefix + str);
 
             /// <summary>[0.17.0]</summary>
             public static void LogException(Exception e) =>
-                UnityModManager.Logger.LogException(null, e, "[UMM-Compat] [Exception] ");
+                Logger.LogException(null, e, "[UMM-Compat] [Exception] ");
 
             /// <summary>[0.17.0]</summary>
             public static void LogException(string key, Exception e) =>
-                UnityModManager.Logger.LogException(key, e, "[UMM-Compat] [Exception] ");
+                Logger.LogException(key, e, "[UMM-Compat] [Exception] ");
 
             /// <summary>[0.17.0]</summary>
             public static void LogException(string key, Exception e, string prefix) => LogExceptionAction(key, e);
-           
+
             public static Action<string> LogAction { get; set; }
             public static Action<string> LogErrorAction { get; set; }
             public static Action<string, Exception> LogExceptionAction { get; set; }
@@ -327,60 +348,72 @@ namespace UnityModManagerNet {
             public static void Clear() { }
         }
 
-        public class Repository {
-            public UnityModManager.Repository.Release[] Releases;
+        public class Repository
+        {
+            public Release[] Releases;
 
             [Serializable]
-            public class Release : IEquatable<UnityModManager.Repository.Release> {
+            public class Release : IEquatable<Release>
+            {
                 public string Id;
                 public string Version;
                 public string DownloadUrl;
 
-                public bool Equals(UnityModManager.Repository.Release other) => this.Id.Equals(other.Id);
+                public bool Equals(Repository.Release other) => this.Id.Equals(other.Id);
 
                 public override bool Equals(object obj) =>
-                    obj != null && obj is UnityModManager.Repository.Release other && this.Equals(other);
+                    obj != null && obj is Repository.Release other && this.Equals(other);
 
                 public override int GetHashCode() => this.Id.GetHashCode();
             }
         }
 
-        public class ModSettings {
+        public class ModSettings
+        {
             public object Settings { get; private set; } // CosmicLoader.ModSettings
             public static Action<object, string> SaveAction;
             public static Func<string, object> LoadAction;
-             
-            public virtual void Save(UnityModManager.ModEntry modEntry) => SaveAction(Settings, modEntry.Info.Id);
 
-            public virtual string GetPath(UnityModManager.ModEntry modEntry) =>
+            public virtual void Save(ModEntry modEntry) => SaveAction(Settings, modEntry.Info.Id);
+
+            public virtual string GetPath(ModEntry modEntry) =>
                 Path.Combine(modEntry.Path, "Settings.xml");
 
-            public static void Save<T>(T data, UnityModManager.ModEntry modEntry)
-                where T : UnityModManager.ModSettings, new() =>
-                UnityModManager.ModSettings.Save<T>(data, modEntry, (XmlAttributeOverrides) null);
+            public static void Save<T>(T data, ModEntry modEntry)
+                where T : ModSettings, new() =>
+                ModSettings.Save<T>(data, modEntry, null);
 
             /// <summary>[0.20.0]</summary>
             public static void Save<T>(
                 T data,
-                UnityModManager.ModEntry modEntry,
+                ModEntry modEntry,
                 XmlAttributeOverrides attributes)
-                where T : UnityModManager.ModSettings, new() {
+                where T : ModSettings, new()
+            {
                 string path = data.GetPath(modEntry);
-                try {
+                try
+                {
                     SaveAction(data.Settings, path);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     modEntry.Logger.Error("Can't save " + path + ".");
                     modEntry.Logger.LogException(ex);
                 }
             }
 
-            public static T Load<T>(UnityModManager.ModEntry modEntry) where T : UnityModManager.ModSettings, new() {
+            public static T Load<T>(ModEntry modEntry) where T : ModSettings, new()
+            {
                 T obj = new T();
                 string path = obj.GetPath(modEntry);
-                if (File.Exists(path)) {
-                    try {
+                if (File.Exists(path))
+                {
+                    try
+                    {
                         obj.Settings = LoadAction(path);
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex)
+                    {
                         modEntry.Logger.Error("Can't read " + path + ".");
                         modEntry.Logger.LogException(ex);
                     }
@@ -389,11 +422,12 @@ namespace UnityModManagerNet {
                 return obj;
             }
 
-            public static T Load<T>(UnityModManager.ModEntry modEntry, XmlAttributeOverrides attributes)
-                where T : UnityModManager.ModSettings, new() => UnityModManager.ModSettings.Load<T>(modEntry);
+            public static T Load<T>(ModEntry modEntry, XmlAttributeOverrides attributes)
+                where T : ModSettings, new() => ModSettings.Load<T>(modEntry);
         }
 
-        public class ModInfo : IEquatable<UnityModManager.ModInfo> {
+        public class ModInfo : IEquatable<ModInfo>
+        {
             public string Id;
             public string DisplayName;
             public string Author;
@@ -411,12 +445,12 @@ namespace UnityModManagerNet {
             [NonSerialized]
             public bool IsCheat = true;
 
-            public static implicit operator bool(UnityModManager.ModInfo exists) => exists != null;
+            public static implicit operator bool(ModInfo exists) => exists != null;
 
-            public bool Equals(UnityModManager.ModInfo other) => this.Id.Equals(other.Id);
+            public bool Equals(ModInfo other) => this.Id.Equals(other.Id);
 
             public override bool Equals(object obj) =>
-                obj != null && obj is UnityModManager.ModInfo other && this.Equals(other);
+                obj != null && obj is ModInfo other && this.Equals(other);
 
             public override int GetHashCode() => this.Id.GetHashCode();
         }

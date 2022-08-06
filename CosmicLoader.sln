@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicLoader", "CosmicLoade
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicLoader.Installer", "CosmicLoader.Installer\CosmicLoader.Installer.csproj", "{59741121-DFEE-4E4F-92BD-327F7A5BFD66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UMM_Compat", "UMM_Compat\UMM_Compat.csproj", "{ED391B9A-3BB8-4836-9BBF-370A6E19220D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityModManagerNet", "UnityModManagerNet\UnityModManagerNet.csproj", "{0488C873-AD00-464B-A644-F37C4EC9B23D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{59741121-DFEE-4E4F-92BD-327F7A5BFD66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59741121-DFEE-4E4F-92BD-327F7A5BFD66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59741121-DFEE-4E4F-92BD-327F7A5BFD66}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED391B9A-3BB8-4836-9BBF-370A6E19220D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED391B9A-3BB8-4836-9BBF-370A6E19220D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED391B9A-3BB8-4836-9BBF-370A6E19220D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED391B9A-3BB8-4836-9BBF-370A6E19220D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0488C873-AD00-464B-A644-F37C4EC9B23D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0488C873-AD00-464B-A644-F37C4EC9B23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0488C873-AD00-464B-A644-F37C4EC9B23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0488C873-AD00-464B-A644-F37C4EC9B23D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

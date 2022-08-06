@@ -34,9 +34,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>Libs\0Harmony.dll</HintPath>
-    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -292,6 +289,49 @@
   <ItemGroup>
     <Compile Include="Libs\Delegates.cs" />
     <Compile Include="Libs\dnlib.cs" />
+    <Compile Include="Libs\Harmony\Extras\DelegateTypeFactory.cs" />
+    <Compile Include="Libs\Harmony\Extras\FastAccess.cs" />
+    <Compile Include="Libs\Harmony\Extras\MethodInvoker.cs" />
+    <Compile Include="Libs\Harmony\Internal\AccessCache.cs" />
+    <Compile Include="Libs\Harmony\Internal\ByteBuffer.cs" />
+    <Compile Include="Libs\Harmony\Internal\CodeTranspiler.cs" />
+    <Compile Include="Libs\Harmony\Internal\Emitter.cs" />
+    <Compile Include="Libs\Harmony\Internal\HarmonySharedState.cs" />
+    <Compile Include="Libs\Harmony\Internal\ILInstruction.cs" />
+    <Compile Include="Libs\Harmony\Internal\InlineSignatureParser.cs" />
+    <Compile Include="Libs\Harmony\Internal\Memory.cs" />
+    <Compile Include="Libs\Harmony\Internal\MethodCopier.cs" />
+    <Compile Include="Libs\Harmony\Internal\MethodPatcher.cs" />
+    <Compile Include="Libs\Harmony\Internal\PatchArgumentExtensions.cs" />
+    <Compile Include="Libs\Harmony\Internal\PatchFunctions.cs" />
+    <Compile Include="Libs\Harmony\Internal\PatchModels.cs" />
+    <Compile Include="Libs\Harmony\Internal\PatchSorter.cs" />
+    <Compile Include="Libs\Harmony\Internal\PatchTools.cs" />
+    <Compile Include="Libs\Harmony\Internal\StructReturnBufferCheck.cs" />
+    <Compile Include="Libs\Harmony\Public\Attributes.cs" />
+    <Compile Include="Libs\Harmony\Public\CodeInstruction.cs" />
+    <Compile Include="Libs\Harmony\Public\ExceptionBlock.cs" />
+    <Compile Include="Libs\Harmony\Public\Harmony.cs" />
+    <Compile Include="Libs\Harmony\Public\HarmonyException.cs" />
+    <Compile Include="Libs\Harmony\Public\HarmonyMethod.cs" />
+    <Compile Include="Libs\Harmony\Public\InlineSignature.cs" />
+    <Compile Include="Libs\Harmony\Public\Patch.cs" />
+    <Compile Include="Libs\Harmony\Public\PatchClassProcessor.cs" />
+    <Compile Include="Libs\Harmony\Public\Patches.cs" />
+    <Compile Include="Libs\Harmony\Public\PatchJsonConverter.cs" />
+    <Compile Include="Libs\Harmony\Public\PatchProcessor.cs" />
+    <Compile Include="Libs\Harmony\Public\Priority.cs" />
+    <Compile Include="Libs\Harmony\Public\ReversePatcher.cs" />
+    <Compile Include="Libs\Harmony\Public\Transpilers.cs" />
+    <Compile Include="Libs\Harmony\Tools\AccessTools.cs" />
+    <Compile Include="Libs\Harmony\Tools\Code.cs" />
+    <Compile Include="Libs\Harmony\Tools\CodeMatch.cs" />
+    <Compile Include="Libs\Harmony\Tools\CodeMatcher.cs" />
+    <Compile Include="Libs\Harmony\Tools\Extensions.cs" />
+    <Compile Include="Libs\Harmony\Tools\FileLog.cs" />
+    <Compile Include="Libs\Harmony\Tools\SymbolExtensions.cs" />
+    <Compile Include="Libs\Harmony\Tools\Tools.cs" />
+    <Compile Include="Libs\Harmony\Tools\Traverse.cs" />
     <Compile Include="Libs\Mono_Minified.cs" />
     <Compile Include="Libs\TinyJson.cs" />
     <Compile Include="ManagerConfig.cs" />
@@ -308,10 +348,7 @@
     <Compile Include="UnityObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UMM_Compat\UMM_Compat.csproj">
-      <Project>{ed391b9a-3bb8-4836-9bbf-370a6e19220d}</Project>
-      <Name>UMM_Compat</Name>
-    </ProjectReference>
+    <None Include=".editorconfig" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

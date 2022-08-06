@@ -8,7 +8,7 @@ namespace CosmicLoader.UMM
 {
     public static class Integration
     {
-        private static Dictionary<Mod, UnityModManager.ModEntry> _mods = new();
+        private static Dictionary<Mod, UnityModManager.ModEntry> _mods = new Dictionary<Mod, UnityModManager.ModEntry>();
         public static UnityModManager.ModEntry GetMod(this Mod mod) => _mods[mod];
 
         public static readonly Version LoaderVersion = new Version(0, 23, 4, 0);
