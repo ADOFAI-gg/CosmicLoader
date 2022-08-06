@@ -6,37 +6,49 @@ using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
 
-namespace CosmicLoader {
-    public class ManagerObject : MonoBehaviour {
-        public void Awake() {
+namespace CosmicLoader
+{
+    public class ManagerObject : MonoBehaviour
+    {
+        public void Awake()
+        {
             DontDestroyOnLoad(this);
-            Application.quitting += () => {
+            Application.quitting += () =>
+            {
                 File.WriteAllText(ManagerConfig.Path, ModManager.Config.ToJson());
-                foreach (Mod mod in ModManager.Mods) {
+                foreach (Mod mod in ModManager.Mods)
+                {
                     if (!mod.Active) continue;
-                    try {
+                    try
+                    {
                         mod.OnExit?.Invoke();
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                         mod.Logger.LogException("OnExit", e);
                     }
                 }
             };
         }
 
-        public void Update() {
-            foreach (Mod mod in ModManager.Mods) {
+        public void Update()
+        {
+            foreach (Mod mod in ModManager.Mods)
+            {
                 if (!mod.Active) continue;
-                try {
+                try
+                {
                     mod.OnUpdate?.Invoke();
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     mod.Logger.LogException("OnUpdate", e);
                 }
             }
         }
 
-        public void OnGUI() {
+        public void OnGUI()
+        {
             if (GUILayout.Button("Open Log"))
                 ModManager.OpenUnityFileLog();
             if (GUILayout.Button("Settings"))
@@ -44,17 +56,22 @@ namespace CosmicLoader {
 
             if (!temp_openGui) return;
             GUILayout.BeginScrollView(scroll, GUILayout.Width(600), GUILayout.Height(800));
-            foreach (var m in ModManager.Mods) {
+            foreach (var m in ModManager.Mods)
+            {
                 GUILayout.Label("-----------------------------------------------------");
                 GUILayout.Label(m.Info.Name);
-                try {
+                try
+                {
                     m.OnGUI?.Invoke();
                 }
-                catch (Exception e) {
+                catch (Exception e)
+                {
                     GUILayout.TextArea(e.ToString());
                 }
+
                 GUILayout.Space(10);
             }
+
             GUILayout.EndScrollView();
         }
 

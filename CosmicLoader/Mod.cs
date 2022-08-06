@@ -21,7 +21,7 @@ namespace CosmicLoader
         public Action<bool> OnToggle;
         public Action OnUpdate;
         public Action OnExit;
-        private bool active;
+        private bool active = false;
 
         internal Mod(ModInfo mInfo)
         {

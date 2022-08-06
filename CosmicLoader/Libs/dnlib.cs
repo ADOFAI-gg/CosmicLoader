@@ -90378,5 +90378,3 @@ namespace dnlib.W32Resources {
 		}
 	}
 }
-
-
