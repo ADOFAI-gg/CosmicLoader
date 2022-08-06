@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 
-namespace CosmicLoader
-{
-    public class ModInfo
-    {
+namespace CosmicLoader {
+    public class ModInfo {
         public string Id;
         public string Name;
         public string FileName;

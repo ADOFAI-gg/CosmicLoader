@@ -287,52 +287,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Libs\Delegates.cs" />
     <Compile Include="Libs\dnlib.cs" />
-    <Compile Include="Libs\Harmony\Extras\DelegateTypeFactory.cs" />
-    <Compile Include="Libs\Harmony\Extras\FastAccess.cs" />
-    <Compile Include="Libs\Harmony\Extras\MethodInvoker.cs" />
-    <Compile Include="Libs\Harmony\Internal\AccessCache.cs" />
-    <Compile Include="Libs\Harmony\Internal\ByteBuffer.cs" />
-    <Compile Include="Libs\Harmony\Internal\CodeTranspiler.cs" />
-    <Compile Include="Libs\Harmony\Internal\Emitter.cs" />
-    <Compile Include="Libs\Harmony\Internal\HarmonySharedState.cs" />
-    <Compile Include="Libs\Harmony\Internal\ILInstruction.cs" />
-    <Compile Include="Libs\Harmony\Internal\InlineSignatureParser.cs" />
-    <Compile Include="Libs\Harmony\Internal\Memory.cs" />
-    <Compile Include="Libs\Harmony\Internal\MethodCopier.cs" />
-    <Compile Include="Libs\Harmony\Internal\MethodPatcher.cs" />
-    <Compile Include="Libs\Harmony\Internal\PatchArgumentExtensions.cs" />
-    <Compile Include="Libs\Harmony\Internal\PatchFunctions.cs" />
-    <Compile Include="Libs\Harmony\Internal\PatchModels.cs" />
-    <Compile Include="Libs\Harmony\Internal\PatchSorter.cs" />
-    <Compile Include="Libs\Harmony\Internal\PatchTools.cs" />
-    <Compile Include="Libs\Harmony\Internal\StructReturnBufferCheck.cs" />
-    <Compile Include="Libs\Harmony\Public\Attributes.cs" />
-    <Compile Include="Libs\Harmony\Public\CodeInstruction.cs" />
-    <Compile Include="Libs\Harmony\Public\ExceptionBlock.cs" />
-    <Compile Include="Libs\Harmony\Public\Harmony.cs" />
-    <Compile Include="Libs\Harmony\Public\HarmonyException.cs" />
-    <Compile Include="Libs\Harmony\Public\HarmonyMethod.cs" />
-    <Compile Include="Libs\Harmony\Public\InlineSignature.cs" />
-    <Compile Include="Libs\Harmony\Public\Patch.cs" />
-    <Compile Include="Libs\Harmony\Public\PatchClassProcessor.cs" />
-    <Compile Include="Libs\Harmony\Public\Patches.cs" />
-    <Compile Include="Libs\Harmony\Public\PatchJsonConverter.cs" />
-    <Compile Include="Libs\Harmony\Public\PatchProcessor.cs" />
-    <Compile Include="Libs\Harmony\Public\Priority.cs" />
-    <Compile Include="Libs\Harmony\Public\ReversePatcher.cs" />
-    <Compile Include="Libs\Harmony\Public\Transpilers.cs" />
-    <Compile Include="Libs\Harmony\Tools\AccessTools.cs" />
-    <Compile Include="Libs\Harmony\Tools\Code.cs" />
-    <Compile Include="Libs\Harmony\Tools\CodeMatch.cs" />
-    <Compile Include="Libs\Harmony\Tools\CodeMatcher.cs" />
-    <Compile Include="Libs\Harmony\Tools\Extensions.cs" />
-    <Compile Include="Libs\Harmony\Tools\FileLog.cs" />
-    <Compile Include="Libs\Harmony\Tools\SymbolExtensions.cs" />
-    <Compile Include="Libs\Harmony\Tools\Tools.cs" />
-    <Compile Include="Libs\Harmony\Tools\Traverse.cs" />
-    <Compile Include="Libs\Mono_Minified.cs" />
     <Compile Include="Libs\TinyJson.cs" />
     <Compile Include="ManagerConfig.cs" />
     <Compile Include="ManagerObject.cs" />
@@ -348,7 +303,20 @@
     <Compile Include="UnityObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
+    <ProjectReference Include="..\HarmonyEx\HarmonyEx.csproj">
+      <Project>{df229d00-dee0-468a-a8ac-e18936ae0cd9}</Project>
+      <Name>HarmonyEx</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UMM_Compat\UMM_Compat.csproj">
+      <Project>{0488c873-ad00-464b-a644-f37c4ec9b23d}</Project>
+      <Name>UMM_Compat</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="bin/Debug/CosmicLoader.dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\CosmicLoader" />
+    <Copy SourceFiles="bin/Debug/0Harmony.dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\CosmicLoader" />
+    <Copy SourceFiles="bin/Debug/UnityModManager.dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\CosmicLoader" />
+  </Target>
 </Project>

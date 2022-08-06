@@ -4,17 +4,14 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace CosmicLoader.UMM
-{
-    public static class Integration
-    {
+namespace CosmicLoader.UMM {
+    public static class Integration {
         private static Dictionary<Mod, UnityModManager.ModEntry> _mods = new();
         public static UnityModManager.ModEntry GetMod(this Mod mod) => _mods[mod];
 
         public static readonly Version LoaderVersion = new Version(0, 23, 4, 0);
 
-        public static ModInfo ParseUMMInfo(JObject info)
-        {
+        public static ModInfo ParseUMMInfo(JObject info) {
             var modInfo = new ModInfo();
             modInfo.Id = info["Id"].ToString();
             modInfo.Name = info["DisplayName"].ToString();
@@ -23,18 +20,15 @@ namespace CosmicLoader.UMM
 
             modInfo.Author = info["Author"].ToString();
             modInfo.Version = info["Version"].ToString();
-            if (info.TryGetValue("GameVersion", out var gameVersion))
-            {
+            if (info.TryGetValue("GameVersion", out var gameVersion)) {
                 modInfo.GameVersion = gameVersion.ToString();
             }
 
-            if (info.TryGetValue("LoadAfter", out var loadAfter))
-            {
+            if (info.TryGetValue("LoadAfter", out var loadAfter)) {
                 modInfo.LoadAfter = loadAfter.ToObject<string[]>();
             }
 
-            if (info.TryGetValue("LoadBefore", out var loadBefore))
-            {
+            if (info.TryGetValue("LoadBefore", out var loadBefore)) {
                 modInfo.LoadBefore = loadBefore.ToObject<string[]>();
             }
 
@@ -43,10 +37,8 @@ namespace CosmicLoader.UMM
             return modInfo;
         }
 
-        public static UnityModManager.ModEntry CreateModEntry(Mod mod)
-        {
-            var info = new UnityModManager.ModInfo()
-            {
+        public static UnityModManager.ModEntry CreateModEntry(Mod mod) {
+            var info = new UnityModManager.ModInfo() {
                 AssemblyName = mod.Info.FileName,
                 Author = mod.Info.Author,
                 DisplayName = mod.Info.Name,
@@ -59,8 +51,7 @@ namespace CosmicLoader.UMM
             return new UnityModManager.ModEntry(info, mod.Path, mod);
         }
 
-        public static void IntegrateUMM()
-        {
+        public static void IntegrateUMM() {
             var logger = new ModLogger("UMM-Compat");
             UnityModManager.Logger.LogAction = m => logger.Log(m);
             UnityModManager.Logger.LogErrorAction = m => logger.LogError(m);

@@ -7,10 +7,8 @@ using CosmicLoader.UMM;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace CosmicLoader
-{
-    public class Mod
-    {
+namespace CosmicLoader {
+    public class Mod {
         public ModInfo Info { get; private set; }
         public ModLogger Logger { get; private set; }
         public Harmony Harmony { get; private set; }
@@ -22,8 +20,7 @@ namespace CosmicLoader
         public Action OnUpdate;
         public Action OnExit;
         private bool active;
-        internal Mod(ModInfo mInfo)
-        {
+        internal Mod(ModInfo mInfo) {
             Info = mInfo;
             Harmony = new Harmony(mInfo.Id);
             Path = mInfo.Path;
@@ -34,11 +31,9 @@ namespace CosmicLoader
             dict[mInfo.Id] = false;
         }
 
-        public bool Active
-        {
+        public bool Active {
             get => active;
-            set
-            {
+            set {
                 active = value;
                 if (active)
                     TryLoad();
@@ -46,21 +41,16 @@ namespace CosmicLoader
             }
         }
 
-        public bool TryLoad()
-        {
-            if (Loaded)
-            {
+        public bool TryLoad() {
+            if (Loaded) {
                 LoadFailed = false;
                 return true;
             }
 
-            try
-            {
+            try {
                 if (Info.IsUMM) LoadUMM();
                 else Load();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Logger.LogException($"Error while loading mod {Info.Id}", e);
                 LoadFailed = true;
                 return false;
@@ -70,10 +60,8 @@ namespace CosmicLoader
             return true;
         }
 
-        void Load()
-        {
-            static MethodInfo GetEntryPoint(Assembly assembly, string entry)
-            {
+        void Load() {
+            static MethodInfo GetEntryPoint(Assembly assembly, string entry) {
                 var identifiers = entry.Split('.');
                 var methodName = identifiers[identifiers.Length - 1];
                 var typeName = string.Join(".", identifiers.Take(identifiers.Length - 1));
@@ -82,15 +70,13 @@ namespace CosmicLoader
             }
 
             var dllPath = System.IO.Path.Combine(Path, Info.FileName);
-            if (!File.Exists(dllPath))
-            {
+            if (!File.Exists(dllPath)) {
                 throw new Exception($"Mod {Info.Id} file not found!");
             }
 
             var assembly = Assembly.LoadFile(dllPath);
             var entryMethod = GetEntryPoint(assembly, Info.EntryPoint);
-            if (entryMethod == null)
-            {
+            if (entryMethod == null) {
                 throw new Exception($"Mod {Info.Name} entry not found!");
             }
 
@@ -99,10 +85,8 @@ namespace CosmicLoader
             if (res is false) throw new Exception($"Mod {Info.Name} entry method returned false!");
             Loaded = true;
         }
-        void LoadUMM()
-        {
-            static MethodInfo GetEntryPoint(Assembly assembly, string entry)
-            {
+        void LoadUMM() {
+            static MethodInfo GetEntryPoint(Assembly assembly, string entry) {
                 var identifiers = entry.Split('.');
                 var methodName = identifiers[identifiers.Length - 1];
                 var typeName = string.Join(".", identifiers.Take(identifiers.Length - 1));
@@ -111,14 +95,12 @@ namespace CosmicLoader
             }
 
             var dllPath = System.IO.Path.Combine(Path, Info.FileName);
-            if (!File.Exists(dllPath))
-            {
+            if (!File.Exists(dllPath)) {
                 throw new Exception($"Mod {Info.Id} file not found!");
             }
             var assembly = Assembly.LoadFile(dllPath);
             var entryMethod = GetEntryPoint(assembly, Info.EntryPoint);
-            if (entryMethod == null)
-            {
+            if (entryMethod == null) {
                 throw new Exception($"Mod {Info.Name} entry not found!");
             }
 
@@ -131,16 +113,13 @@ namespace CosmicLoader
             Loaded = true;
         }
 
-        public Action OnGUI
-        {
-            get
-            {
+        public Action OnGUI {
+            get {
                 if (Info.IsUMM) return () => _entry.OnGUI(_entry);
                 return _onGUI;
             }
 
-            set
-            {
+            set {
                 _onGUI = value;
             }
         }
