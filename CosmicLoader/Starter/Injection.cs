@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CosmicLoader.UI;
+using UnityEngine;
 
 namespace CosmicLoader.Starter
 {

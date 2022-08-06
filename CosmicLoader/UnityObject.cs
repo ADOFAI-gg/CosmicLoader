@@ -1,8 +1,10 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CosmicLoader {
-    public class UnityObject : MonoBehaviour {
+namespace CosmicLoader
+{
+    public class UnityObject : MonoBehaviour
+    {
         public Action AwakeAction = () => { };
         public Action FixedUpdateAction = () => { };
         public Action LateUpdateAction = () => { };

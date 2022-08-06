@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.IO;
+using CosmicLoader.UI;
+using UnityEngine.UI;
 
 namespace CosmicLoader
 {
@@ -29,6 +31,20 @@ namespace CosmicLoader
                     }
                 }
             };
+
+            Asset.Load();
+            var obj = Instantiate(Asset.Window).AddComponent<ModWindow>();
+            
+            var panel = obj.transform.GetChild(0);
+            obj.scroll = panel.GetChild(3).GetComponent<ScrollRect>();
+            obj.title = panel.GetChild(0).GetComponent<Text>();
+            obj.exitBtn = obj.title.transform.GetChild(0).GetComponent<Button>();
+            obj.selectedModEnabled = panel.GetChild(4).GetChild(2).GetComponent<Button>();
+            obj.selectedModTitle = panel.GetChild(4).GetChild(0).GetComponent<Text>();
+            obj.selectedModVersion = panel.GetChild(4).GetChild(1).GetComponent<Text>();
+            obj.modGUIRect = panel.GetChild(5).GetComponent<RectTransform>();
+
+            obj.gameObject.SetActive(false);
         }
 
         public void Update()
@@ -45,37 +61,17 @@ namespace CosmicLoader
                     mod.Logger.LogException("OnUpdate", e);
                 }
             }
+            
+            if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.F10))
+            {
+                ModWindow.Instance.gameObject.SetActive(!ModWindow.Instance.gameObject.activeSelf);
+            }
         }
 
         public void OnGUI()
         {
             if (GUILayout.Button("Open Log"))
                 ModManager.OpenUnityFileLog();
-            if (GUILayout.Button("Settings"))
-                temp_openGui = !temp_openGui;
-
-            if (!temp_openGui) return;
-            GUILayout.BeginScrollView(scroll, GUILayout.Width(600), GUILayout.Height(800));
-            foreach (var m in ModManager.Mods)
-            {
-                GUILayout.Label("-----------------------------------------------------");
-                GUILayout.Label(m.Info.Name);
-                try
-                {
-                    m.OnGUI?.Invoke();
-                }
-                catch (Exception e)
-                {
-                    GUILayout.TextArea(e.ToString());
-                }
-
-                GUILayout.Space(10);
-            }
-
-            GUILayout.EndScrollView();
         }
-
-        public static bool temp_openGui = false;
-        public static Vector2 scroll = new Vector2();
     }
 }

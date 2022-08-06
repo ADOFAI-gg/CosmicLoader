@@ -5,6 +5,7 @@ using UnityEngine;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using CosmicLoader.UI;
 using CosmicLoader.UMM;
 using HarmonyLib;
 using Newtonsoft.Json;
@@ -14,6 +15,8 @@ namespace CosmicLoader
 {
     public static class ModManager
     {
+        public static readonly Version Version = new Version(0, 1, 0);
+        
         public static ManagerObject Instance { get; private set; }
         public static bool Loaded { get; private set; }
         public static ManagerConfig Config { get; private set; }
@@ -123,6 +126,8 @@ namespace CosmicLoader
                         Mods.Add(mod);
                         mod.Initialize();
                     }
+
+                    ModWindow.Instance.Initialize(ModManager.Mods);
                 }
                 else Directory.CreateDirectory(modsPath);
 
