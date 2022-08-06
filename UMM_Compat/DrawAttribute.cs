@@ -1,24 +1,26 @@
 ﻿using System;
 
-namespace UnityModManagerNet {
+namespace UnityModManagerNet
+    {
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
 	public class DrawAttribute : Attribute
-	{
-		public DrawAttribute() { }
+    {
+		public DrawAttribute()
+    { }
 
 		public DrawAttribute(string Label)
-		{
+    {
 			this.Label = Label;
 		}
 
 		public DrawAttribute(string Label, DrawType Type)
-		{
+    {
 			this.Label = Label;
 			this.Type = Type;
 		}
 
 		public DrawAttribute(DrawType Type)
-		{
+    {
 			this.Type = Type;
 		}
 

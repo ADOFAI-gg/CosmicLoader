@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{DF229D00-DEE0-468A-A8AC-E18936AE0CD9}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>HarmonyLib</RootNamespace>
+        <AssemblyName>0Harmony</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+        <LangVersion>9</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="Delegates.cs" />
+        <Compile Include="HarmonyEx.cs" />
+        <Compile Include="Harmony\Extras\DelegateTypeFactory.cs" />
+        <Compile Include="Harmony\Extras\FastAccess.cs" />
+        <Compile Include="Harmony\Extras\MethodInvoker.cs" />
+        <Compile Include="Harmony\Internal\AccessCache.cs" />
+        <Compile Include="Harmony\Internal\ByteBuffer.cs" />
+        <Compile Include="Harmony\Internal\CodeTranspiler.cs" />
+        <Compile Include="Harmony\Internal\Emitter.cs" />
+        <Compile Include="Harmony\Internal\HarmonySharedState.cs" />
+        <Compile Include="Harmony\Internal\ILInstruction.cs" />
+        <Compile Include="Harmony\Internal\InlineSignatureParser.cs" />
+        <Compile Include="Harmony\Internal\Memory.cs" />
+        <Compile Include="Harmony\Internal\MethodCopier.cs" />
+        <Compile Include="Harmony\Internal\MethodPatcher.cs" />
+        <Compile Include="Harmony\Internal\PatchArgumentExtensions.cs" />
+        <Compile Include="Harmony\Internal\PatchFunctions.cs" />
+        <Compile Include="Harmony\Internal\PatchModels.cs" />
+        <Compile Include="Harmony\Internal\PatchSorter.cs" />
+        <Compile Include="Harmony\Internal\PatchTools.cs" />
+        <Compile Include="Harmony\Internal\StructReturnBufferCheck.cs" />
+        <Compile Include="Harmony\Public\Attributes.cs" />
+        <Compile Include="Harmony\Public\CodeInstruction.cs" />
+        <Compile Include="Harmony\Public\ExceptionBlock.cs" />
+        <Compile Include="Harmony\Public\Harmony.cs" />
+        <Compile Include="Harmony\Public\HarmonyException.cs" />
+        <Compile Include="Harmony\Public\HarmonyMethod.cs" />
+        <Compile Include="Harmony\Public\InlineSignature.cs" />
+        <Compile Include="Harmony\Public\Patch.cs" />
+        <Compile Include="Harmony\Public\PatchClassProcessor.cs" />
+        <Compile Include="Harmony\Public\Patches.cs" />
+        <Compile Include="Harmony\Public\PatchJsonConverter.cs" />
+        <Compile Include="Harmony\Public\PatchProcessor.cs" />
+        <Compile Include="Harmony\Public\Priority.cs" />
+        <Compile Include="Harmony\Public\ReversePatcher.cs" />
+        <Compile Include="Harmony\Public\Transpilers.cs" />
+        <Compile Include="Harmony\Tools\AccessTools.cs" />
+        <Compile Include="Harmony\Tools\Code.cs" />
+        <Compile Include="Harmony\Tools\CodeMatch.cs" />
+        <Compile Include="Harmony\Tools\CodeMatcher.cs" />
+        <Compile Include="Harmony\Tools\Extensions.cs" />
+        <Compile Include="Harmony\Tools\FileLog.cs" />
+        <Compile Include="Harmony\Tools\SymbolExtensions.cs" />
+        <Compile Include="Harmony\Tools\Tools.cs" />
+        <Compile Include="Harmony\Tools\Traverse.cs" />
+        <Compile Include="Mono_Minified.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+</Project>
