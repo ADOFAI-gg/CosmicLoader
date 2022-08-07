@@ -5,6 +5,11 @@ namespace CosmicLoader
 {
     public class ModLogger
     {
+        public string LogFormat = "[{0}] {1}";
+        public string LogWarningFormat = "<color=#F5B417>[{0}: Warning] {1}</color>";
+        public string LogErrorFormat = "<color=#AF2543>[{0}: Error] {1}</color>";
+        public string LogExceptionFormat = "<color=#AF2543>[{0}] {1}: {2}</color>";
+        
         public ModLogger(string prefix)
         {
             LogPrefix = prefix;
@@ -14,34 +19,32 @@ namespace CosmicLoader
 
         public T Log<T>(T obj)
         {
-            //Console.WriteLine($"[{LogPrefix}] {obj}");
-            Debug.Log($"[{LogPrefix}] {obj}");
-            ModManager.Config.Logs.Add($"[{LogPrefix}] {obj}");
+            LogRaw(string.Format(LogFormat, LogPrefix, obj));
             return obj;
         }
 
         public T LogWarning<T>(T obj)
         {
-            //Console.WriteLine($"[{LogPrefix}] [Warning] {obj}");
-            Debug.Log($"[{LogPrefix}] [Warning] {obj}");
-            ModManager.Config.Logs.Add($"[{LogPrefix}] [Warning] {obj}");
+            LogRaw(string.Format(LogWarningFormat, LogPrefix, obj));
             return obj;
         }
 
         public T LogError<T>(T obj)
         {
-            //Console.WriteLine($"[{LogPrefix}] [Error] {obj}");
-            Debug.Log($"[{LogPrefix}] [Error] {obj}");
-            ModManager.Config.Logs.Add($"[{LogPrefix}] [Error] {obj}");
+            LogRaw(string.Format(LogErrorFormat, LogPrefix, obj));
             return obj;
         }
 
         public T LogException<T>(string message, T ex) where T : Exception
         {
-            //Console.WriteLine($"[{LogPrefix}] [Exception] {message}: {ex}");
-            Debug.Log($"[{LogPrefix}] [Exception] {message}: {ex}");
-            ModManager.Config.Logs.Add($"[{LogPrefix}] [Exception] {message}: {ex}");
+            LogRaw(string.Format(LogExceptionFormat, LogPrefix, message, ex));
             return ex;
+        }
+        
+        public static void LogRaw(string log)
+        {
+            Debug.Log(RDUtils.RemoveRichTags(log));
+            ModManager.Config.Logs.Add(log);
         }
     }
 }

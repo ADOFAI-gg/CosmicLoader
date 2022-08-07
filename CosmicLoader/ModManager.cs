@@ -33,7 +33,7 @@ namespace CosmicLoader
                 UnityEngine.Object.DontDestroyOnLoad(Instance.gameObject);
                 OpenUnityFileLog();
                 Mods = new List<ModBase>();
-                Logger = new ModLogger("Manager");
+                Logger = new ModLogger("CosmicLoader");
                 if (File.Exists(ManagerConfig.Path))
                     Config = File.ReadAllText(ManagerConfig.Path).FromJson<ManagerConfig>() ?? new ManagerConfig();
                 else

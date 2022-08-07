@@ -63,10 +63,26 @@ namespace CosmicLoader.UMM
 
         public static void IntegrateUMM()
         {
-            var logger = new ModLogger("UMM-Compat");
-            UnityModManager.Logger.LogAction = m => logger.Log(m);
-            UnityModManager.Logger.LogErrorAction = m => logger.LogError(m);
-            UnityModManager.Logger.LogExceptionAction = (m, e) => logger.LogException(m, e);
+            var logger = new ModLogger(null);
+            logger.LogFormat = "{0}{1}";
+            logger.LogWarningFormat = "<color=#F5B417>{0}{1}</color>";
+            logger.LogErrorFormat = "<color=#AF2543>{0}{1}</color>";
+            logger.LogExceptionFormat = "<color=#AF2543>{0}{1}: {2}</color>";
+            UnityModManager.Logger.LogAction = (msg, prefix) =>
+            {
+                logger.LogPrefix = prefix == null ? "[UMM_Compat] " : $"[UMM_Compat] {prefix}";
+                logger.Log(msg);
+            };
+            UnityModManager.Logger.LogErrorAction = (msg, prefix) =>
+            {
+                logger.LogPrefix = prefix == null ? "[UMM_Compat: Error] " : $"[UMM_Compat] {prefix}";
+                logger.LogError(msg);
+            };
+            UnityModManager.Logger.LogExceptionAction = (msg, ex, prefix) =>
+            {
+                logger.LogPrefix = prefix == null ? "[UMM_Compat] " : $"[UMM_Compat] {prefix}";
+                logger.LogException(msg, ex);
+            };
             UnityModManager.ModSettings.SaveAction = (o, s) => ((ModSettings)o).Save(s);
             UnityModManager.ModSettings.LoadAction = s => ModSettings.Load(s);
         }

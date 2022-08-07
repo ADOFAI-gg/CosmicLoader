@@ -284,32 +284,32 @@ namespace UnityModManagerNet {
                 Path.Combine(Path.Combine(Application.dataPath, Path.Combine("Managed", nameof(UnityModManager))),
                     "Log.txt");
 
-            public static void NativeLog(string str) => NativeLog(str, "[UMM-Compat] ");
+            public static void NativeLog(string str) => NativeLog(str, null);
 
-            public static void NativeLog(string str, string prefix) => LogAction(prefix + str);
+            public static void NativeLog(string str, string prefix) => LogAction(str, prefix);
 
-            public static void Log(string str) => Logger.Log(str, "[UMM-Compat] ");
+            public static void Log(string str) => Logger.Log(str, null);
 
-            public static void Log(string str, string prefix) => LogAction(prefix + str);
+            public static void Log(string str, string prefix) => LogAction(str, prefix);
 
-            public static void Error(string str) => Logger.Error(str, "[UMM-Compat] [Error] ");
+            public static void Error(string str) => Logger.Error(str, null);
 
-            public static void Error(string str, string prefix) => LogErrorAction(prefix + str);
+            public static void Error(string str, string prefix) => LogErrorAction(str, prefix);
 
             /// <summary>[0.17.0]</summary>
             public static void LogException(Exception e) =>
-                Logger.LogException(null, e, "[UMM-Compat] [Exception] ");
+                Logger.LogException(null, e, null);
 
             /// <summary>[0.17.0]</summary>
             public static void LogException(string key, Exception e) =>
-                Logger.LogException(key, e, "[UMM-Compat] [Exception] ");
+                Logger.LogException(key, e, null);
 
             /// <summary>[0.17.0]</summary>
-            public static void LogException(string key, Exception e, string prefix) => LogExceptionAction(key, e);
+            public static void LogException(string key, Exception e, string prefix) => LogExceptionAction(key, e, prefix);
 
-            public static Action<string> LogAction { get; set; }
-            public static Action<string> LogErrorAction { get; set; }
-            public static Action<string, Exception> LogExceptionAction { get; set; }
+            public static Action<string, string> LogAction { get; set; }
+            public static Action<string, string> LogErrorAction { get; set; }
+            public static Action<string, Exception, string> LogExceptionAction { get; set; }
 
             public static void Clear() { }
         }

@@ -305,6 +305,7 @@
     <Compile Include="UI\ModWindow.cs" />
     <Compile Include="UMM\Integration.cs" />
     <Compile Include="UnityObject.cs" />
+    <Compile Include="Utils\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HarmonyEx\HarmonyEx.csproj">
