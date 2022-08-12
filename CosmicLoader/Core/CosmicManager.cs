@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using System.Threading;
+using CosmicLoader.Mod;
 using CosmicLoader.UI;
-using CosmicLoader.UMM;
-using HarmonyLib;
+using CosmicLoader.UMMCompatibility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
-namespace CosmicLoader
+namespace CosmicLoader.Core
 {
-    public static class ModManager
+    public static class CosmicManager
     {
-        public static readonly Version Version = new Version(0, 1, 0);
+        static CosmicManager()
+        {
+            Version = Assembly.GetExecutingAssembly().GetName().Version;
+        }
         
+        public static readonly Version Version;
         public static ManagerObject Instance { get; private set; }
         public static bool Loaded { get; private set; }
         public static ManagerConfig Config { get; private set; }
@@ -26,7 +29,7 @@ namespace CosmicLoader
         public static void Initialize()
         {
             if (Loaded) return;
-            Integration.IntegrateUMM();
+            UMMHelper.IntegrateUMM();
             try
             {
                 Instance = new GameObject("ModManager").AddComponent<ManagerObject>();
@@ -50,28 +53,35 @@ namespace CosmicLoader
                     mods = mods.Distinct().ToArray();
                     foreach (var modPath in mods)
                     {
-                        var infoPath = System.IO.Path.Combine(modPath, "Info.json");
-                        if (!File.Exists(infoPath)) continue;
-                        var jObject = JObject.Parse(File.ReadAllText(infoPath));
-                        ModInfo info;
-                        if (jObject.ContainsKey("AssemblyName"))
+                        try
                         {
-                            info = Integration.ParseUMMInfo(jObject);
-                            if (info == null) continue;
+                            var infoPath = Path.Combine(modPath, "Info.json");
+                            if (!File.Exists(infoPath)) continue;
+                            var jObject = JObject.Parse(File.ReadAllText(infoPath));
+                            ModInfo info;
+                            if (jObject.ContainsKey("AssemblyName"))
+                            {
+                                info = UMMHelper.ParseUMMInfo(jObject);
+                                if (info == null) continue;
+                            }
+                            else
+                            {
+                                info = JsonConvert.DeserializeObject<ModInfo>(File.ReadAllText(infoPath));
+                                if (info == null) continue;
+                                info.IsUMM = false;
+                            }
+
+                            info.Path = Path.Combine(Directory.GetCurrentDirectory(), modPath);
+
+                            info.References ??= Array.Empty<string>();
+                            info.LoadAfter ??= Array.Empty<string>();
+                            info.LoadBefore ??= Array.Empty<string>();
+                            infos.Add(info);
                         }
-                        else
+                        catch (Exception e)
                         {
-                            info = JsonConvert.DeserializeObject<ModInfo>(File.ReadAllText(infoPath));
-                            if (info == null) continue;
-                            info.IsUMM = false;
+                            Logger.LogException($"Error while loading mod at path {modPath}", e);
                         }
-
-                        info.Path = Path.Combine(Directory.GetCurrentDirectory(), modPath);
-
-                        info.References ??= Array.Empty<string>();
-                        info.LoadAfter ??= Array.Empty<string>();
-                        info.LoadBefore ??= Array.Empty<string>();
-                        infos.Add(info);
                     }
 
                     var sortedInfos = new List<ModInfo>();
@@ -93,8 +103,7 @@ namespace CosmicLoader
 
                             sortedInfos.Add(info);
 
-                            exit:
-                            continue;
+                            exit:;
                         }
                     }
 
@@ -113,21 +122,28 @@ namespace CosmicLoader
                     foreach (var info in sortedInfos)
                     {
                         Logger.Log("Loading mod: " + info.Id);
-                        ModBase mod;
-                        if (info.IsUMM)
+                        try
                         {
-                            mod = new UMMCompatMod(info);
-                        }
-                        else
-                        {
-                            mod = new CosmicMod(info);
-                        }
+                            ModBase mod;
+                            if (info.IsUMM)
+                            {
+                                mod = new UMMCompatMod(info);
+                            }
+                            else
+                            {
+                                mod = new ModPlaceholder(info);
+                            }
 
-                        Mods.Add(mod);
-                        mod.Initialize();
+                            Mods.Add(mod);
+                            mod.Initialize();
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.LogException($"Error while loading mod {info.Id}", e);
+                        }
                     }
 
-                    ModWindow.Instance.Initialize(ModManager.Mods);
+                    ModWindow.Instance.Initialize(CosmicManager.Mods);
                 }
                 else Directory.CreateDirectory(modsPath);
 

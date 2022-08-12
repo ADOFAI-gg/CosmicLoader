@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using CosmicLoader.Core;
+using CosmicLoader.Mod;
+using CosmicLoader.Utils;
 using Newtonsoft.Json.Utilities.LinqBridge;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,9 +33,22 @@ namespace CosmicLoader.UI
             selectedModTitle.text = mod.Info.Name;
             selectedModVersion.text = mod.Info.Version;
 
-            if (!mod.Loaded || mod.LoadFailed) selectedModEnabled.targetGraphic.color = Color.red;
-            else if (mod.Active) selectedModEnabled.targetGraphic.color = Color.green;
-            else selectedModEnabled.targetGraphic.color = Color.gray;
+            switch (mod.State)
+            {
+                case ModState.BeforeLoad:
+                case ModState.LoadFailed:
+                case ModState.Error:
+                    selectedModEnabled.targetGraphic.color = Color.red;
+                    break;
+                case ModState.Active:
+                    selectedModEnabled.targetGraphic.color = Color.green;
+                    break;
+                case ModState.Inactive:
+                    selectedModEnabled.targetGraphic.color = Color.gray;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             ScrollPosition = Vector2.zero;
         }
 
@@ -52,13 +68,13 @@ namespace CosmicLoader.UI
         {
             selectedModEnabled.onClick.AddListener(() =>
             {
-                if (!SelectedMod.LoadedAndReady)
+                if (!SelectedMod.State.Ready())
                 {
                     selectedModEnabled.targetGraphic.color = Color.red;
                     return;
                 }
 
-                SelectedMod.Active = !SelectedMod.Active;
+                SelectedMod.Toggle();
                 if (SelectedMod.Active) selectedModEnabled.targetGraphic.color = Color.green;
                 else selectedModEnabled.targetGraphic.color = Color.gray;
             });
@@ -68,7 +84,7 @@ namespace CosmicLoader.UI
             lg.padding = new RectOffset(15, 15, 15, 15);
             lg.spacing = 15;
 
-            title.text = "CosmicLoader v" + ModManager.Version;
+            title.text = "CosmicLoader v" + CosmicManager.Version;
 
             var first = true;
             foreach (var mod in mods)
@@ -79,21 +95,21 @@ namespace CosmicLoader.UI
                 btn.transition = Selectable.Transition.None;
                 btn.onClick.AddListener(() =>
                 {
-                    if (SelectedMod.LoadedAndReady) SelectedModBtn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
+                    if (SelectedMod.State.Ready()) SelectedModBtn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
                     else SelectedModBtn.targetGraphic.color = new Color32(0xAF, 0x5C, 0x5C, 0xFF);
                     SelectMod(mod);
-                    if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    if (mod.State.Ready()) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
                     else btn.targetGraphic.color = new Color32(0xFF, 0x7C, 0x7C, 0xFF);
                     SelectedModBtn = btn;
                 });
 
-                if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
+                if (mod.State.Ready()) btn.targetGraphic.color = new Color32(0x9C, 0x9C, 0x9C, 0xFF);
                 else btn.targetGraphic.color = new Color32(0xAF, 0x5C, 0x5C, 0xFF);
                 if (first)
                 {
                     SelectMod(mod);
                     SelectedModBtn = btn;
-                    if (mod.LoadedAndReady) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
+                    if (mod.State.Ready()) btn.targetGraphic.color = new Color32(0xFF, 0xFF, 0xFF, 0xFF);
                     else btn.targetGraphic.color = new Color32(0xFF, 0x7C, 0x7C, 0xFF);
                     first = false;
                 }
@@ -104,7 +120,7 @@ namespace CosmicLoader.UI
 
         private void OnGUI()
         {
-            if (SelectedMod.Loaded && !SelectedMod.LoadFailed && SelectedMod.Active)
+            if (SelectedMod.Active)
             {
                 var rect = new Rect(-268.444f, -200, 782.222f, 533.333f);
                 rect.x += Screen.width / 2.0f;
@@ -113,10 +129,11 @@ namespace CosmicLoader.UI
                 ScrollPosition = GUILayout.BeginScrollView(ScrollPosition, GUILayout.Width(782.222f), GUILayout.Height(533.333f));
                 try
                 {
-                    SelectedMod.OnGUI?.Invoke();
+                    SelectedMod.OnGUI();
                 }
                 catch (Exception e)
                 {
+                    ModLogger.LogRaw(e.ToString());
                     GUILayout.TextArea(e.ToString());
                 }
 

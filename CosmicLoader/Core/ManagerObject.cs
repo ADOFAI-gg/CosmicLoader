@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using System.IO;
+using CosmicLoader.Mod;
 using CosmicLoader.UI;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace CosmicLoader
+namespace CosmicLoader.Core
 {
     public class ManagerObject : MonoBehaviour
     {
@@ -17,13 +14,13 @@ namespace CosmicLoader
             DontDestroyOnLoad(this);
             Application.quitting += () =>
             {
-                File.WriteAllText(ManagerConfig.Path, ModManager.Config.ToJson());
-                foreach (ModBase mod in ModManager.Mods)
+                File.WriteAllText(ManagerConfig.Path, CosmicManager.Config.ToJson());
+                foreach (ModBase mod in CosmicManager.Mods)
                 {
                     if (!mod.Active) continue;
                     try
                     {
-                        mod.OnExit?.Invoke();
+                        mod.OnExit();
                     }
                     catch (Exception e)
                     {
@@ -49,12 +46,12 @@ namespace CosmicLoader
 
         public void Update()
         {
-            foreach (ModBase mod in ModManager.Mods)
+            foreach (ModBase mod in CosmicManager.Mods)
             {
                 if (!mod.Active) continue;
                 try
                 {
-                    mod.OnUpdate?.Invoke();
+                    mod.OnUpdate();
                 }
                 catch (Exception e)
                 {
@@ -71,7 +68,7 @@ namespace CosmicLoader
         public void OnGUI()
         {
             if (GUILayout.Button("Open Log"))
-                ModManager.OpenUnityFileLog();
+                CosmicManager.OpenUnityFileLog();
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using System;
+using CosmicLoader.Core;
 using UnityEngine;
 
-namespace CosmicLoader
+namespace CosmicLoader.Mod
 {
     public class ModLogger
     {
@@ -44,7 +45,7 @@ namespace CosmicLoader
         public static void LogRaw(string log)
         {
             Debug.Log(RDUtils.RemoveRichTags(log));
-            ModManager.Config.Logs.Add(log);
+            CosmicManager.Config.Logs.Add(log);
         }
     }
 }

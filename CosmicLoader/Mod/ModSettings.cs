@@ -1,8 +1,7 @@
 ﻿using System.IO;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace CosmicLoader
+namespace CosmicLoader.Mod
 {
     public class ModSettings
     {

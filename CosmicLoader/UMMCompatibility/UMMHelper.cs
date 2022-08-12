@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using CosmicLoader.Mod;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 using UnityModManagerNet;
 
-namespace CosmicLoader.UMM
+namespace CosmicLoader.UMMCompatibility
 {
-    public static class Integration
+    public static class UMMHelper
     {
         private static Dictionary<UMMCompatMod, UnityModManager.ModEntry> _mods = new();
         public static UnityModManager.ModEntry GetMod(this UMMCompatMod mod) => _mods[mod];
@@ -17,14 +18,17 @@ namespace CosmicLoader.UMM
 
         public static ModInfo ParseUMMInfo(JObject info)
         {
+            const StringComparison ignoreCase = StringComparison.OrdinalIgnoreCase;
             var modInfo = new ModInfo();
-            modInfo.Id = info["Id"].ToString();
-            modInfo.Name = info["DisplayName"].ToString();
             modInfo.FileName = info["AssemblyName"].ToString();
-            modInfo.EntryPoint = info["EntryMethod"].ToString();
+            
+            var dict = info.ToObject<Dictionary<string, object>>()!;
+            modInfo.Id = dict.First(pair => pair.Key.Equals("Id", ignoreCase)).Value.ToString();
+            modInfo.Name = dict.First(pair => pair.Key.Equals("DisplayName", ignoreCase)).Value.ToString();
+            modInfo.EntryPoint = dict.First(pair => pair.Key.Equals("EntryMethod", ignoreCase)).Value.ToString();
+            modInfo.Author = dict.First(pair => pair.Key.Equals("Author", ignoreCase)).Value.ToString();
+            modInfo.Version = dict.First(pair => pair.Key.Equals("Version", ignoreCase)).Value.ToString();
 
-            modInfo.Author = info["Author"].ToString();
-            modInfo.Version = info["Version"].ToString();
             if (info.TryGetValue("GameVersion", out var gameVersion))
             {
                 modInfo.GameVersion = gameVersion.ToString();

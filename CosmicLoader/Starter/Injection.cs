@@ -1,4 +1,7 @@
-﻿using CosmicLoader.UI;
+﻿using System.IO;
+using System.Reflection;
+using CosmicLoader.Core;
+using CosmicLoader.UI;
 using UnityEngine;
 
 namespace CosmicLoader.Starter
@@ -10,7 +13,7 @@ namespace CosmicLoader.Starter
         static Injection()
         {
             Debug.Log("[CosmicLoader] Injection started");
-            ModManager.Initialize();
+            CosmicManager.Initialize();
         }
     }
 }

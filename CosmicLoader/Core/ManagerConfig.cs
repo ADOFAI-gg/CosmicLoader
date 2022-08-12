@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CosmicLoader
+namespace CosmicLoader.Core
 {
     public class ManagerConfig
     {

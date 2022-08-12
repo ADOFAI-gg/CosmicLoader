@@ -1,75 +1,88 @@
 ﻿using System;
-using System.Linq;
 using System.IO;
-using HarmonyLib;
+using System.Linq;
 using System.Reflection;
-using CosmicLoader.UMM;
+using CosmicLoader.UMMCompatibility;
 using UnityEngine;
 using UnityModManagerNet;
 
-namespace CosmicLoader
+namespace CosmicLoader.Mod
 {
-    public class UMMCompatMod : ModBase
+    public sealed class UMMCompatMod : ModBase
     {
         public UnityModManager.ModEntry ModEntry;
 
-        public override Assembly Assembly
+        public override Assembly Assembly => ModEntry.Assembly;
+
+        public override ModState State
         {
-            get => ModEntry.Assembly;
-            protected set => ModEntry.Assembly = value;
+            get
+            {
+                if (!ModEntry.Started) return ModState.BeforeLoad;
+                if (ModEntry.ErrorOnLoading) return ModState.LoadFailed;
+                if (!ModEntry.Enabled) return ModState.Error;
+                return ModEntry.Active ? ModState.Active : ModState.Inactive;
+            }
+            internal set
+            {
+                switch (value)
+                {
+                    case ModState.BeforeLoad:
+                        ModEntry.Started = false;
+                        break;
+                    case ModState.Active:
+                        if (!ModEntry.Started) Load();
+                        
+                        ModEntry.Started = true;
+                        ModEntry.Enabled = true;
+                        ModEntry.Active = true;
+                        break;
+                    case ModState.Inactive:
+                        ModEntry.Enabled = true;
+                        ModEntry.Active = false;
+                        break;
+                    case ModState.Error:
+                        ModEntry.Enabled = false;
+                        break;
+                    case ModState.LoadFailed:
+                        ModEntry.ErrorOnLoading = true;
+                        break;
+                }
+            }
         }
 
-        public override bool Loaded
+        protected internal override void OnToggle(bool active)
         {
-            get => ModEntry.Started;
-            protected set => ModEntry.Started = value;
+            if (!ModEntry.Started) return;
+            ModEntry.OnToggle?.Invoke(ModEntry, active);
         }
 
-        public override bool LoadFailed
+        protected internal override void OnUpdate()
         {
-            get => ModEntry.ErrorOnLoading;
-            protected set => ModEntry.ErrorOnLoading = value;
+            ModEntry.OnUpdate?.Invoke(ModEntry, Time.deltaTime);
         }
 
-        public override Action<bool> OnToggle
-        {
-            get => a => ModEntry.OnToggle?.Invoke(ModEntry, a);
-            set => throw new NotSupportedException();
-        }
+        protected internal override void OnExit() { }
 
-        public override Action<bool> OnInitialize
+        protected internal override void OnGUI()
         {
-            get => _ => { };
-            set => throw new NotSupportedException();
+            ModEntry.OnGUI?.Invoke(ModEntry);
         }
-
-        public override Action OnUpdate
+        
+        internal override void Initialize()
         {
-            get => () => ModEntry.OnUpdate?.Invoke(ModEntry, Time.deltaTime);
-            set => throw new NotSupportedException();
-        }
-
-        public override Action OnExit
-        {
-            get => () => { };
-            set => throw new NotSupportedException();
-        }
-
-        public override Action OnGUI
-        {
-            get => () => ModEntry.OnGUI?.Invoke(ModEntry);
-            set => throw new NotSupportedException();
-        }
-
-        public override void Initialize()
-        {
-            ModEntry = Integration.CreateModEntry(this);
+            ModEntry = UMMHelper.CreateModEntry(this);
             Debug.Log($"Created mod entry {ModEntry} for {Info.Name} assembly {ModEntry.Assembly}");
-            Integration.RegisterEntry(this, ModEntry);
+            UMMHelper.RegisterEntry(this, ModEntry);
             base.Initialize();
         }
 
-        protected override void Load()
+        protected override void Load(bool active)
+        {
+            if (active) Load();
+        }
+
+        private void Load()
         {
             static MethodInfo GetEntryPoint(Assembly assembly, string entry)
             {
@@ -93,10 +106,9 @@ namespace CosmicLoader
                 throw new Exception($"Mod {Info.Name} entry not found!");
             }
 
-            this.Assembly = entryMethod.DeclaringType!.Assembly;
+            ModEntry.Assembly = entryMethod.DeclaringType!.Assembly;
             var res = entryMethod.Invoke(null, new object[] {ModEntry});
             if (res is false) throw new Exception($"Mod {Info.Name} entry method returned false!");
-            Loaded = true;
         }
 
         public UMMCompatMod(ModInfo mInfo) : base(mInfo) { }

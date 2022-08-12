@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>bin\Release\CosmicLoader.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -287,25 +289,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ManagerConfig.cs" />
+    <Compile Include="Core\ManagerObject.cs" />
+    <Compile Include="Core\CosmicManager.cs" />
     <Compile Include="Libs\dnlib.cs" />
     <Compile Include="Libs\TinyJson.cs" />
-    <Compile Include="ManagerConfig.cs" />
-    <Compile Include="ManagerObject.cs" />
     <Compile Include="Libs\Newtonsoft.Json.cs" />
-    <Compile Include="ModManager.cs" />
     <Compile Include="Mod\ModBase.cs" />
     <Compile Include="Mod\CosmicMod.cs" />
     <Compile Include="Mod\ModInfo.cs" />
     <Compile Include="Mod\ModLogger.cs" />
+    <Compile Include="Mod\ModPlaceholder.cs" />
     <Compile Include="Mod\ModSettings.cs" />
+    <Compile Include="Mod\ModState.cs" />
     <Compile Include="Mod\UMMCompatMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Starter\Injection.cs" />
     <Compile Include="UI\Asset.cs" />
+    <Compile Include="UI\Drawer.cs" />
     <Compile Include="UI\ModWindow.cs" />
-    <Compile Include="UMM\Integration.cs" />
+    <Compile Include="UMMCompatibility\UMMHelper.cs" />
     <Compile Include="UnityObject.cs" />
     <Compile Include="Utils\Extensions.cs" />
+    <Compile Include="Utils\KeyBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HarmonyEx\HarmonyEx.csproj">

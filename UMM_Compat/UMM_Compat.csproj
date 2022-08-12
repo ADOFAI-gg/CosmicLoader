@@ -45,12 +45,16 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\A Dance of Fire and Ice_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Compat.cs" />
     <Compile Include="DrawAttribute.cs" />
     <Compile Include="DrawType.cs" />
     <Compile Include="EnableReloadingAttribute.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ICopyable.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

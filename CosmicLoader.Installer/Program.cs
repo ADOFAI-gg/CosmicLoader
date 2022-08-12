@@ -60,6 +60,7 @@ namespace CosmicLoader.Installer {
                 if (read != bytes.Length) {
                     throw new Exception("Could not read all bytes from file");
                 }
+
                 module = ModuleDefMD.Load(bytes, modCtx);
             }
 
@@ -75,12 +76,10 @@ namespace CosmicLoader.Installer {
             }
 
             var method = new MethodDefUser(".cctor", MethodSig.CreateStatic(module.CorLibTypes.Void));
-            method.Attributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName | MethodAttributes.HideBySig;
+            method.Attributes = MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.SpecialName |
+                                MethodAttributes.RTSpecialName | MethodAttributes.HideBySig;
             method.ImplAttributes = MethodImplAttributes.IL | MethodImplAttributes.Managed;
             type.Methods.Add(method);
-
-            var loadType = new TypeRefUser(module, "System.Reflection", "Assembly", module.CorLibTypes.AssemblyRef);
-            var loadMethod = new MemberRefUser(module, "LoadFrom", MethodSig.CreateStatic(module.CorLibTypes.Void), loadType);
 
             var mod = ModuleDefMD.Load(typeof(Injection).Module);
             var injtype = new TypeRefUser(module, "CosmicLoader.Starter", "Injection", mod.Assembly.ToAssemblyRef());
@@ -93,7 +92,15 @@ namespace CosmicLoader.Installer {
             il.Instructions.Add(OpCodes.Ret.ToInstruction());
 
             module.Write(targetDll);
-            File.Copy("CosmicLoader.dll", Path.Combine(AdofaiPath, "A Dance of Fire and Ice_Data", "Managed", "CosmicLoader.dll"), true);
+            File.Copy("CosmicLoader.dll",
+                Path.Combine(AdofaiPath, "A Dance of Fire and Ice_Data", "Managed", "CosmicLoader", "CosmicLoader.dll"),
+                true);
+            File.Copy("0Harmony.dll",
+                Path.Combine(AdofaiPath, "A Dance of Fire and Ice_Data", "Managed", "CosmicLoader", "0Harmony.dll"),
+                true);
+            File.Copy("UnityModManager.dll",
+                Path.Combine(AdofaiPath, "A Dance of Fire and Ice_Data", "Managed", "CosmicLoader",
+                    "UnityModManager.dll"), true);
         }
 
         static void Uninstall() {
@@ -115,6 +122,7 @@ namespace CosmicLoader.Installer {
                 if (read != bytes.Length) {
                     throw new Exception("Could not read all bytes from file");
                 }
+
                 module = ModuleDefMD.Load(bytes, modCtx);
             }
 
@@ -132,17 +140,11 @@ namespace CosmicLoader.Installer {
             module.Write(targetDll);
         }
 
-        static void SetPath() {
+        static void SetPath() { }
 
-        }
+        static void Update() { }
 
-        static void Update() {
-
-        }
-
-        static void Check() {
-
-        }
+        static void Check() { }
     }
 
     internal class Utils {

@@ -12,7 +12,7 @@ using UnityEngine;
 
 // ReSharper disable once CheckNamespace
 namespace UnityModManagerNet {
-    public class UnityModManager {
+    public partial class UnityModManager {
         public static readonly List<ModEntry> modEntries = new List<ModEntry>();
 
         /// <summary>Contains version of UnityEngine</summary>
@@ -206,8 +206,6 @@ namespace UnityModManagerNet {
 
             /// <summary>Called by MonoBehaviour.FixedUpdate [0.13.0]</summary>
             public Action<ModEntry, float> OnFixedUpdate;
-
-            private readonly Dictionary<long, MethodInfo> mCache = new Dictionary<long, MethodInfo>();
 
             /// <summary>UI checkbox</summary>
             public bool Enabled = true;
