@@ -10,9 +10,8 @@ namespace CosmicLoader.Mod
 {
     public sealed class UMMCompatMod : ModBase
     {
+        public new UMMModInfo Info => (UMMModInfo)base.Info;
         public UnityModManager.ModEntry ModEntry;
-
-        public override Assembly Assembly => ModEntry.Assembly;
 
         public override ModState State
         {
@@ -53,6 +52,7 @@ namespace CosmicLoader.Mod
 
         protected internal override void OnToggle(bool active)
         {
+            Debug.Log($"[{Info.Id}] {(active ? "Enabled" : "Disabled")}");
             if (!ModEntry.Started) return;
             ModEntry.OnToggle?.Invoke(ModEntry, active);
         }
@@ -68,8 +68,8 @@ namespace CosmicLoader.Mod
         {
             ModEntry.OnGUI?.Invoke(ModEntry);
         }
-        
-        internal override void Initialize()
+
+        protected internal override void Initialize()
         {
             ModEntry = UMMHelper.CreateModEntry(this);
             Debug.Log($"Created mod entry {ModEntry} for {Info.Name} assembly {ModEntry.Assembly}");
@@ -93,24 +93,23 @@ namespace CosmicLoader.Mod
                 return type?.GetMethod(methodName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             }
 
-            var dllPath = System.IO.Path.Combine(Path, Info.FileName);
+            var dllPath = System.IO.Path.Combine(Info.Path, Info.ModInfo.AssemblyName);
             if (!File.Exists(dllPath))
             {
                 throw new Exception($"Mod {Info.Id} file not found!");
             }
 
             var assembly = Assembly.LoadFile(dllPath);
-            var entryMethod = GetEntryPoint(assembly, Info.EntryPoint);
+            var entryMethod = GetEntryPoint(assembly, Info.ModInfo.EntryMethod);
             if (entryMethod == null)
             {
                 throw new Exception($"Mod {Info.Name} entry not found!");
             }
 
+            Info.Assembly = assembly;
             ModEntry.Assembly = entryMethod.DeclaringType!.Assembly;
             var res = entryMethod.Invoke(null, new object[] {ModEntry});
             if (res is false) throw new Exception($"Mod {Info.Name} entry method returned false!");
         }
-
-        public UMMCompatMod(ModInfo mInfo) : base(mInfo) { }
     }
 }

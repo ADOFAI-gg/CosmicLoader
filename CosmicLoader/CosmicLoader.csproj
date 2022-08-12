@@ -12,7 +12,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -289,11 +289,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CosmicModAttribute.cs" />
+    <Compile Include="Attributes\LoadAfterAttribute.cs" />
+    <Compile Include="Attributes\LoadBeforeAttribute.cs" />
     <Compile Include="Core\ManagerConfig.cs" />
     <Compile Include="Core\ManagerObject.cs" />
     <Compile Include="Core\CosmicManager.cs" />
     <Compile Include="Libs\dnlib.cs" />
-    <Compile Include="Libs\TinyJson.cs" />
     <Compile Include="Libs\Newtonsoft.Json.cs" />
     <Compile Include="Mod\ModBase.cs" />
     <Compile Include="Mod\CosmicMod.cs" />
@@ -302,6 +304,7 @@
     <Compile Include="Mod\ModPlaceholder.cs" />
     <Compile Include="Mod\ModSettings.cs" />
     <Compile Include="Mod\ModState.cs" />
+    <Compile Include="Mod\ModCategory.cs" />
     <Compile Include="Mod\UMMCompatMod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Starter\Injection.cs" />
@@ -309,9 +312,9 @@
     <Compile Include="UI\Drawer.cs" />
     <Compile Include="UI\ModWindow.cs" />
     <Compile Include="UMMCompatibility\UMMHelper.cs" />
+    <Compile Include="UMMCompatibility\UMMModInfo.cs" />
     <Compile Include="UnityObject.cs" />
     <Compile Include="Utils\Extensions.cs" />
-    <Compile Include="Utils\KeyBinding.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HarmonyEx\HarmonyEx.csproj">

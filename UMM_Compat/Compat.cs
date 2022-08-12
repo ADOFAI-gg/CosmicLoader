@@ -16,7 +16,7 @@ namespace UnityModManagerNet {
         public static readonly List<ModEntry> modEntries = new List<ModEntry>();
 
         /// <summary>Contains version of UnityEngine</summary>
-        public static Version unityVersion { get; private set; }
+        public static Version unityVersion { get; private set; } = ParseVersion(Application.unityVersion);
 
         /// <summary>Contains version of a game, if configured [0.15.0]</summary>
         public static Version gameVersion { get; private set; } = new Version();
@@ -24,7 +24,7 @@ namespace UnityModManagerNet {
         /// <summary>Contains version of UMM</summary>
         public static Version version { get; private set; } = typeof(UnityModManager).Assembly.GetName().Version;
 
-        public static string modsPath { get; private set; }
+        public static string modsPath => Path.Combine(Directory.GetCurrentDirectory(), "Mods");    
 
         public static ModEntry FindMod(string id) =>
             modEntries.FirstOrDefault(
@@ -216,7 +216,6 @@ namespace UnityModManagerNet {
             public bool CanReload { get; private set; }
 
             public bool Started { get; set; }
-
             public bool ErrorOnLoading { get; set; }
 
             /// <summary>If OnToggle exists</summary>
@@ -331,53 +330,79 @@ namespace UnityModManagerNet {
         }
 
         public class ModSettings {
-            public object Settings { get; private set; } // CosmicLoader.ModSettings
-            public static Action<object, string> SaveAction;
-            public static Func<string, object> LoadAction;
-
-            public virtual void Save(ModEntry modEntry) => SaveAction(Settings, modEntry.Info.Id);
+            public virtual void Save(UnityModManager.ModEntry modEntry) => Save(this, modEntry);
 
             public virtual string GetPath(ModEntry modEntry) =>
                 Path.Combine(modEntry.Path, "Settings.xml");
+            
+            public static void Save<T>(T data, ModEntry modEntry) where T : ModSettings, new() => Save<T>(data, modEntry, null);
 
-            public static void Save<T>(T data, ModEntry modEntry)
-                where T : ModSettings, new() =>
-                ModSettings.Save<T>(data, modEntry, null);
-
-            /// <summary>[0.20.0]</summary>
-            public static void Save<T>(
-                T data,
-                ModEntry modEntry,
-                XmlAttributeOverrides attributes)
-                where T : ModSettings, new() {
+            /// <summary>
+            /// [0.20.0]
+            /// </summary>
+            // Token: 0x060000D3 RID: 211 RVA: 0x0000C534 File Offset: 0x0000A734
+            public static void Save<T>(T data, UnityModManager.ModEntry modEntry, XmlAttributeOverrides attributes) where T : UnityModManager.ModSettings, new()
+            {
                 string path = data.GetPath(modEntry);
-                try {
-                    SaveAction(data.Settings, path);
+                try
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(path))
+                    {
+                        new XmlSerializer(typeof(T), attributes).Serialize(streamWriter, data);
+                    }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     modEntry.Logger.Error("Can't save " + path + ".");
                     modEntry.Logger.LogException(ex);
                 }
             }
-
-            public static T Load<T>(ModEntry modEntry) where T : ModSettings, new() {
-                T obj = new T();
-                string path = obj.GetPath(modEntry);
-                if (File.Exists(path)) {
-                    try {
-                        obj.Settings = LoadAction(path);
+            public static T Load<T>(UnityModManager.ModEntry modEntry) where T : UnityModManager.ModSettings, new()
+            {
+                T t = new T();
+                string path = t.GetPath(modEntry);
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        using (FileStream fileStream = File.OpenRead(path))
+                        {
+                            return (T)((object)new XmlSerializer(typeof(T)).Deserialize(fileStream));
+                        }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         modEntry.Logger.Error("Can't read " + path + ".");
                         modEntry.Logger.LogException(ex);
                     }
+                    return t;
                 }
-
-                return obj;
+                return t;
             }
 
-            public static T Load<T>(ModEntry modEntry, XmlAttributeOverrides attributes)
-                where T : ModSettings, new() => ModSettings.Load<T>(modEntry);
+            // Token: 0x060000D5 RID: 213 RVA: 0x0000C66C File Offset: 0x0000A86C
+            public static T Load<T>(UnityModManager.ModEntry modEntry, XmlAttributeOverrides attributes) where T : UnityModManager.ModSettings, new()
+            {
+                T t = new T();
+                string path = t.GetPath(modEntry);
+                if (File.Exists(path))
+                {
+                    try
+                    {
+                        using (FileStream fileStream = File.OpenRead(path))
+                        {
+                            return (T)((object)new XmlSerializer(typeof(T), attributes).Deserialize(fileStream));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        modEntry.Logger.Error("Can't read " + path + ".");
+                        modEntry.Logger.LogException(ex);
+                    }
+                    return t;
+                }
+                return t;
+            }
         }
 
         public class ModInfo : IEquatable<ModInfo> {

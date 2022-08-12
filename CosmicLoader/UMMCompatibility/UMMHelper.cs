@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using CosmicLoader.Core;
 using CosmicLoader.Mod;
 using Newtonsoft.Json.Linq;
+using TinyJson;
+using UnityEngine;
 using UnityModManagerNet;
 
 namespace CosmicLoader.UMMCompatibility
@@ -11,58 +15,27 @@ namespace CosmicLoader.UMMCompatibility
     {
         private static Dictionary<UMMCompatMod, UnityModManager.ModEntry> _mods = new();
         public static UnityModManager.ModEntry GetMod(this UMMCompatMod mod) => _mods[mod];
-        public static void RegisterEntry(UMMCompatMod mod, UnityModManager.ModEntry entry) => _mods.Add(mod, entry);
-        
+        public static void RegisterEntry(UMMCompatMod mod, UnityModManager.ModEntry entry)
+        {
+            _mods.Add(mod, entry);
+            UnityModManager.modEntries.Add(entry);
+        }
+
 
         public static readonly Version LoaderVersion = new Version(0, 23, 4, 0);
 
-        public static ModInfo ParseUMMInfo(JObject info)
+        public static ModInfo ParseUMMInfo(string info)
         {
-            const StringComparison ignoreCase = StringComparison.OrdinalIgnoreCase;
-            var modInfo = new ModInfo();
-            modInfo.FileName = info["AssemblyName"].ToString();
-            
-            var dict = info.ToObject<Dictionary<string, object>>()!;
-            modInfo.Id = dict.First(pair => pair.Key.Equals("Id", ignoreCase)).Value.ToString();
-            modInfo.Name = dict.First(pair => pair.Key.Equals("DisplayName", ignoreCase)).Value.ToString();
-            modInfo.EntryPoint = dict.First(pair => pair.Key.Equals("EntryMethod", ignoreCase)).Value.ToString();
-            modInfo.Author = dict.First(pair => pair.Key.Equals("Author", ignoreCase)).Value.ToString();
-            modInfo.Version = dict.First(pair => pair.Key.Equals("Version", ignoreCase)).Value.ToString();
-
-            if (info.TryGetValue("GameVersion", out var gameVersion))
-            {
-                modInfo.GameVersion = gameVersion.ToString();
-            }
-
-            if (info.TryGetValue("LoadAfter", out var loadAfter))
-            {
-                modInfo.LoadAfter = loadAfter.ToObject<string[]>();
-            }
-
-            if (info.TryGetValue("LoadBefore", out var loadBefore))
-            {
-                modInfo.LoadBefore = loadBefore.ToObject<string[]>();
-            }
-
-            modInfo.References = Array.Empty<string>();
-            modInfo.IsUMM = true;
+            var ummModInfo = info.FromJson<UnityModManager.ModInfo>();
+            var modInfo = new UMMModInfo(ummModInfo);
             return modInfo;
         }
 
         public static UnityModManager.ModEntry CreateModEntry(UMMCompatMod mod)
         {
-            var info = new UnityModManager.ModInfo()
-            {
-                AssemblyName = mod.Info.FileName,
-                Author = mod.Info.Author,
-                DisplayName = mod.Info.Name,
-                EntryMethod = mod.Info.EntryPoint,
-                Version = mod.Info.Version,
-                GameVersion = mod.Info.GameVersion,
-                Id = mod.Info.Id,
-                LoadAfter = mod.Info.LoadAfter,
-            };
-            return new UnityModManager.ModEntry(info, mod.Path, mod);
+            CosmicManager.Logger.Log("Creating mod entry for " + mod.Info.Id);
+            var info = mod.Info.ModInfo;
+            return new UnityModManager.ModEntry(info, mod.Info.Path, mod);
         }
 
         public static void IntegrateUMM()
@@ -87,8 +60,8 @@ namespace CosmicLoader.UMMCompatibility
                 logger.LogPrefix = prefix == null ? "[UMM_Compat] " : $"[UMM_Compat] {prefix}";
                 logger.LogException(msg, ex);
             };
-            UnityModManager.ModSettings.SaveAction = (o, s) => ((ModSettings)o).Save(s);
-            UnityModManager.ModSettings.LoadAction = s => ModSettings.Load(s);
+            UnityModManager.Textures.Init();
+            new GameObject().AddComponent<UnityModManager.UI.UIObj>();
         }
     }
 }

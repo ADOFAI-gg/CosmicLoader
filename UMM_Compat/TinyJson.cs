@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace CosmicLoader
+namespace TinyJson
 {
     public static class JSONWriter
     {

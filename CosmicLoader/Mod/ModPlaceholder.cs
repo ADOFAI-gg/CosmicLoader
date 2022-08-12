@@ -5,9 +5,6 @@ namespace CosmicLoader.Mod
 {
     public class ModPlaceholder : ModBase
     {
-        public ModPlaceholder(ModInfo mInfo) : base(mInfo) { }
-        public override Assembly Assembly => null;
-
         public override ModState State
         {
             get => ModState.LoadFailed;

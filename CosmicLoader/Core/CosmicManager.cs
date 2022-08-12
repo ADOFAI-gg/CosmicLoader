@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CosmicLoader.Attributes;
 using CosmicLoader.Mod;
 using CosmicLoader.UI;
 using CosmicLoader.UMMCompatibility;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TinyJson;
 using UnityEngine;
 
 namespace CosmicLoader.Core
@@ -25,7 +27,10 @@ namespace CosmicLoader.Core
         public static ManagerConfig Config { get; private set; }
         public static List<ModBase> Mods { get; private set; }
         public static ModLogger Logger { get; private set; }
-
+        
+        public const string LibrariesPath = "Libraries";
+        public const string ModulesPath = "Modules";
+        
         public static void Initialize()
         {
             if (Loaded) return;
@@ -45,44 +50,85 @@ namespace CosmicLoader.Core
                     File.WriteAllText(ManagerConfig.Path, Config.ToJson());
                 }
 
-                const string modsPath = "Mods/";
+                var modsPath = Path.Combine(Directory.GetCurrentDirectory(), "Mods/");
                 if (Directory.Exists(modsPath))
                 {
                     string[] mods = Directory.GetDirectories(modsPath);
                     var infos = new List<ModInfo>();
-                    mods = mods.Distinct().ToArray();
+                    Action afterLoad = null;
                     foreach (var modPath in mods)
                     {
                         try
                         {
                             var infoPath = Path.Combine(modPath, "Info.json");
-                            if (!File.Exists(infoPath)) continue;
-                            var jObject = JObject.Parse(File.ReadAllText(infoPath));
-                            ModInfo info;
-                            if (jObject.ContainsKey("AssemblyName"))
+                            if (File.Exists(infoPath))
                             {
-                                info = UMMHelper.ParseUMMInfo(jObject);
+                                var info = UMMHelper.ParseUMMInfo(File.ReadAllText(infoPath));
+                                info.Path = modPath;
+                                infos.Add(info);
                                 if (info == null) continue;
                             }
                             else
                             {
-                                info = JsonConvert.DeserializeObject<ModInfo>(File.ReadAllText(infoPath));
-                                if (info == null) continue;
-                                info.IsUMM = false;
+                                var assemblies = Directory.GetFiles(infoPath, "*.dll")
+                                        .Concat(Directory.GetFiles(Path.Combine(infoPath, LibrariesPath), "*.dll"))
+                                        .Concat(Directory.GetFiles(Path.Combine(infoPath, ModulesPath), "*.dll"))
+                                        .ToArray();
+                                
+                                if (assemblies.Length == 0) continue;
+                                if (assemblies.Length > 1) Logger.LogWarning($"Found multiple assemblies in {infoPath}");
+                                Assembly assembly = null;
+                                var modDirName = Path.GetDirectoryName(modPath) + ".dll";
+                                foreach (var assemblyPath in assemblies.Reverse())
+                                {
+                                    var fileName = Path.GetFileName(assemblyPath);
+                                    if (fileName == modDirName) assembly = Assembly.LoadFrom(assemblyPath);
+                                    else Assembly.LoadFrom(assemblyPath);
+                                }
+                                assembly ??= Assembly.LoadFrom(assemblies[0]);
+
+                                afterLoad += () =>
+                                {
+                                    try
+                                    {
+                                        var attr = assembly!.GetCustomAttribute<CosmicModAttribute>();
+                                        if (attr == null) return;
+                                        var loadAfter = assembly.GetCustomAttributes<LoadAfterAttribute>();
+                                        var loadBefore = assembly.GetCustomAttributes<LoadBeforeAttribute>();
+                                        var info = new ModInfo
+                                        {
+                                            Id = attr.Id,
+                                            Name = attr.Name,
+                                            Version = attr.Version,
+                                            Author = attr.Author,
+                                            GameVersion = attr.GameVersion,
+                                            Category = attr.Category,
+                                            LoadAfter = loadAfter.SelectMany(l => l.LoadAfter).ToArray(),
+                                            LoadBefore = loadBefore.SelectMany(l => l.LoadBefore).ToArray(),
+                                            ModType = attr.MainClass,
+                                            Assembly = assembly,
+                                            Path = modPath
+                                        };
+                                        infos.Add(info);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Logger.LogException($"Error while loading mod at path {modPath}", e);
+                                    }
+                                };
                             }
-
-                            info.Path = Path.Combine(Directory.GetCurrentDirectory(), modPath);
-
-                            info.References ??= Array.Empty<string>();
-                            info.LoadAfter ??= Array.Empty<string>();
-                            info.LoadBefore ??= Array.Empty<string>();
-                            infos.Add(info);
                         }
                         catch (Exception e)
                         {
                             Logger.LogException($"Error while loading mod at path {modPath}", e);
                         }
                     }
+
+                    Logger.Log("Loaded UMM Compat infos and CosmicLoader assemblies");
+                    afterLoad?.Invoke();
+                    Logger.Log("Loaded CosmicLoader infos");
+                    
+                    infos.Sort((a, b) => String.Compare(a.Id, b.Id, StringComparison.Ordinal));
 
                     var sortedInfos = new List<ModInfo>();
                     for (int a = 0; a < infos.Count; a++)
@@ -106,6 +152,8 @@ namespace CosmicLoader.Core
                             exit:;
                         }
                     }
+                    
+                    Logger.Log("Sorted infos");
 
                     if (sortedInfos.Count != infos.Count)
                     {
@@ -127,25 +175,45 @@ namespace CosmicLoader.Core
                             ModBase mod;
                             if (info.IsUMM)
                             {
-                                mod = new UMMCompatMod(info);
+                                mod = new UMMCompatMod();
                             }
                             else
                             {
-                                mod = new ModPlaceholder(info);
-                            }
+                                var type = info.ModType;
+                                if (type.IsSubclassOf(typeof(CosmicMod)))
+                                {
+                                    Logger.LogError($"{info.Id} is not a valid mod type!");
+                                    mod = new ModPlaceholder();
+                                    goto Load;
+                                }
 
+                                var instance = Activator.CreateInstance(type);
+                                if (instance == null)
+                                {
+                                    Logger.LogError($"Could not create instance of {type}");
+                                    mod = new ModPlaceholder();
+                                    goto Load;
+                                }
+                                
+                                mod = (ModBase) instance;
+                            }
+                            
+                            Load:
                             Mods.Add(mod);
+                            mod.Setup(info);
                             mod.Initialize();
                         }
                         catch (Exception e)
                         {
-                            Logger.LogException($"Error while loading mod {info.Id}", e);
+                            Logger.LogException($"Error while initializing mod {info.Id}", e);
                         }
                     }
 
-                    ModWindow.Instance.Initialize(CosmicManager.Mods);
+                    ModWindow.Instance.Initialize(Mods);
                 }
                 else Directory.CreateDirectory(modsPath);
+                
+                Logger.Log("Loading mods complete");
 
                 Loaded = true;
             }

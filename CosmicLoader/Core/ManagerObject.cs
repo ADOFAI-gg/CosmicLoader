@@ -2,6 +2,7 @@
 using System.IO;
 using CosmicLoader.Mod;
 using CosmicLoader.UI;
+using TinyJson;
 using UnityEngine;
 using UnityEngine.UI;
 

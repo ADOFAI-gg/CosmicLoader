@@ -8,11 +8,9 @@ namespace CosmicLoader.Mod
 {
     public abstract class ModBase
     {
-        public ModInfo Info { get; }
-        public ModLogger Logger { get; }
-        public Harmony Harmony { get;  }
-        public string Path { get; }
-        public abstract Assembly Assembly { get; }
+        public ModInfo Info { get; private set; }
+        public ModLogger Logger { get; private set; }
+        public Harmony Harmony { get; private set; }
         public abstract ModState State { get; internal set; }
         public bool Active => State == ModState.Active;
 
@@ -60,6 +58,8 @@ namespace CosmicLoader.Mod
             try
             {
                 Load(state);
+                State = state ? ModState.Active : ModState.Inactive;
+                OnToggle(state);
             }
             catch (Exception e)
             {
@@ -68,22 +68,21 @@ namespace CosmicLoader.Mod
                 return false;
             }
 
-            State = state ? ModState.Active : ModState.Inactive;
-            OnToggle(state);
             return true;
         }
 
         protected abstract void Load(bool active);
 
-        protected ModBase(ModInfo mInfo)
+        protected ModBase() { }
+
+        internal void Setup(ModInfo info)
         {
-            Info = mInfo;
-            Logger = new ModLogger(mInfo.Name);
+            Info = info;
+            Logger = new ModLogger(info.Name);
             Harmony = new Harmony(Info.Id);
-            Path = Info.Path;
         }
         
-        internal virtual void Initialize()
+        protected internal virtual void Initialize()
         {
             TryLoad();
         }
