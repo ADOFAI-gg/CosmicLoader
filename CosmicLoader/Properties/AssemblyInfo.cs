@@ -8,11 +8,11 @@ using CosmicLoader.Mod;
 // 제어됩니다. 어셈블리와 관련된 정보를 수정하려면
 // 이러한 특성 값을 변경하세요.
 [assembly: AssemblyTitle("CosmicLoader")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A mod loader for the game A Dance of Fire and Ice.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CosmicLoader")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright © ADOFAI.gg 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
