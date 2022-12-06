@@ -47,17 +47,17 @@ namespace CosmicLoader.UMMCompatibility
             logger.LogExceptionFormat = "<color=#AF2543>{0}{1}: {2}</color>";
             UnityModManager.Logger.LogAction = (msg, prefix) =>
             {
-                logger.LogPrefix = prefix == null ? "[UMM_Compat] " : $"[UMM_Compat] {prefix}";
+                logger.LogPrefix = prefix == null ? "[CosmicLoader.UMMCompat] " : $"[CosmicLoader.UMMCompat] {prefix}";
                 logger.Log(msg);
             };
             UnityModManager.Logger.LogErrorAction = (msg, prefix) =>
             {
-                logger.LogPrefix = prefix == null ? "[UMM_Compat: Error] " : $"[UMM_Compat] {prefix}";
+                logger.LogPrefix = prefix == null ? "[CosmicLoader.UMMCompat: Error] " : $"[CosmicLoader.UMMCompat] {prefix}";
                 logger.LogError(msg);
             };
             UnityModManager.Logger.LogExceptionAction = (msg, ex, prefix) =>
             {
-                logger.LogPrefix = prefix == null ? "[UMM_Compat] " : $"[UMM_Compat] {prefix}";
+                logger.LogPrefix = prefix == null ? "[CosmicLoader.UMMCompat] " : $"[CosmicLoader.UMMCompat] {prefix}";
                 logger.LogException(msg, ex);
             };
             UnityModManager.Textures.Init();

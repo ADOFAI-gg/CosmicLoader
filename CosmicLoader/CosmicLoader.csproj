@@ -321,13 +321,12 @@
       <Project>{df229d00-dee0-468a-a8ac-e18936ae0cd9}</Project>
       <Name>HarmonyEx</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UMM_Compat\UMM_Compat.csproj">
+    <ProjectReference Include="..\CosmicLoader.UMMCompat\CosmicLoader.UMMCompat.csproj">
       <Project>{0488c873-ad00-464b-a644-f37c4ec9b23d}</Project>
-      <Name>UMM_Compat</Name>
+      <Name>CosmicLoader.UMMCompat</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include=".editorconfig" />
     <EmbeddedResource Include="UIAsset" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

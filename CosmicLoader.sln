@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicLoader", "CosmicLoade
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicLoader.Installer", "CosmicLoader.Installer\CosmicLoader.Installer.csproj", "{59741121-DFEE-4E4F-92BD-327F7A5BFD66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UMM_Compat", "UMM_Compat\UMM_Compat.csproj", "{0488C873-AD00-464B-A644-F37C4EC9B23D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CosmicLoader.UMMCompat", "CosmicLoader.UMMCompat\CosmicLoader.UMMCompat.csproj", "{0488C873-AD00-464B-A644-F37C4EC9B23D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HarmonyEx", "HarmonyEx\HarmonyEx.csproj", "{DF229D00-DEE0-468A-A8AC-E18936AE0CD9}"
 EndProject
